@@ -1,0 +1,35 @@
+/* Development styles for content area */
+.container-fluid {
+    padding: 20px;
+}
+
+/* Development-specific styles */
+.dev-info {
+    background: #e3f2fd;
+    border: 1px solid #2196f3;
+    padding: 10px;
+    margin-bottom: 20px;
+    border-radius: 4px;
+}
+
+/* Ensure existing styles work in development */
+.well {
+    background-color: #f5f5f5;
+    border: 1px solid #e3e3e3;
+    border-radius: 4px;
+    padding: 19px;
+    margin-bottom: 20px;
+}
+
+/* Hot reload indicator */
+.vite-dev-indicator {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    background: #4caf50;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 3px;
+    font-size: 12px;
+    z-index: 9999;
+}
