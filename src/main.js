@@ -252,10 +252,10 @@ const textStyle = new Style({
 });
 
 function getWFO() {
-    return escapeHTML($('#wfo').val());
+    return escapeHTML(getInputElement('wfo').value);
 }
 function setWFO(wfo) {
-    $('#wfo').val(escapeHTML(wfo));
+    getInputElement('wfo').value = escapeHTML(wfo);
 }
 function getYear() {
     return parseInt(requireInputElement('year').value, 10);

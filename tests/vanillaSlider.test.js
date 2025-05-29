@@ -2,12 +2,14 @@
  * Tests for VanillaSlider component
  */
 
-import { VanillaSlider } from '../src/vanillaSlider.js';
 import { jest, describe, test, expect, beforeEach, afterEach } from '@jest/globals';
 
+// Mock domUtils before importing VanillaSlider
 jest.mock('../src/domUtils.js', () => ({
     getElement: jest.fn()
 }));
+
+import { VanillaSlider } from '../src/vanillaSlider.js';
 
 describe('VanillaSlider', () => {
     let mockContainer;
