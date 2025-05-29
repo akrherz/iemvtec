@@ -34,7 +34,7 @@ class VTECApp {
                 this.showDevPlaceholder();
             }
         } catch (error) {
-            console.log('Development: Loading static content placeholder');
+            console.log(`Development: Loading static content placeholder ${error.message}`);
             this.showDevPlaceholder();
         }
     }
@@ -64,5 +64,4 @@ class VTECApp {
 }
 
 // Initialize the app
-const _app = new VTECApp();
-
+window._app = new VTECApp();  // @ts-ignore
