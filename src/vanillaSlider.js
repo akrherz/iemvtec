@@ -51,7 +51,7 @@ export class VanillaSlider {
         };
 
         // Store instance data on the container (using non-standard property)
-        container['vanillaSlider'] = sliderData;
+        container.vanillaSlider = sliderData;
 
         // Initialize position
         VanillaSlider.updateSliderPosition(sliderData);
@@ -260,20 +260,20 @@ export class VanillaSlider {
     // Public API methods
     static getValue(elementId) {
         const container = getElement(elementId);
-        return container && container['vanillaSlider'] ? container['vanillaSlider'].value : 0;
+        return container && container.vanillaSlider ? container.vanillaSlider.value : 0;
     }
 
     static setValue(elementId, value) {
         const container = getElement(elementId);
-        if (container && container['vanillaSlider']) {
-            VanillaSlider.setSliderValue(container['vanillaSlider'], value);
+        if (container && container.vanillaSlider) {
+            VanillaSlider.setSliderValue(container.vanillaSlider, value);
         }
     }
 
     static setOption(elementId, option, value) {
         const container = getElement(elementId);
-        if (container && container['vanillaSlider']) {
-            const sliderData = container['vanillaSlider'];
+        if (container && container.vanillaSlider) {
+            const sliderData = container.vanillaSlider;
             sliderData.config[option] = value;
             
             if (option === 'min' || option === 'max') {
@@ -285,9 +285,9 @@ export class VanillaSlider {
 
     static destroy(elementId) {
         const container = getElement(elementId);
-        if (container && container['vanillaSlider']) {
+        if (container && container.vanillaSlider) {
             container.innerHTML = '';
-            delete container['vanillaSlider'];
+            delete container.vanillaSlider;
         }
     }
 }
