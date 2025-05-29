@@ -63,5 +63,5 @@ class VTECApp {
 
 }
 
-// Initialize the app
-window._app = new VTECApp();  // @ts-ignore
+// @ts-ignore
+window._app = new VTECApp(); 

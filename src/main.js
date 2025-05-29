@@ -10,9 +10,10 @@ import { Tile, Vector } from 'ol/layer';
 import { Vector as VectorSource, XYZ, OSM } from 'ol/source';
 import { GeoJSON } from 'ol/format';
 import { transform } from 'ol/proj';
-import { requireInputElement } from './domUtils.js';
+import { requireInputElement, getElement, getInputElement } from './domUtils.js';
 import { iemdata } from './iemdata.js';
 import { setState, getState, StateKeys } from './state.js';
+import { VanillaSlider } from './vanillaSlider.js';
 import moment from 'moment';
 
 let olmap = null;
@@ -168,10 +169,14 @@ export function selectElementContents(elid) {
 }
 
 function getSignificance() {
-    return escapeHTML($('#significance').val());
+    const significanceElement = getInputElement('significance');
+    return escapeHTML(significanceElement ? significanceElement.value : '');
 }
 function setSignificance(significance) {
-    $('#significance').val(escapeHTML(significance));
+    const significanceElement = getInputElement('significance');
+    if (significanceElement) {
+        significanceElement.value = escapeHTML(significance);
+    }
 }
 //----------------
 function getETN() {
@@ -180,7 +185,10 @@ function getETN() {
 function setETN(etn) {
     etn = parseInt(etn, 10);
     if (etn > 0 && etn < 10000) {
-        $('#etn').val(etn);
+        const etnElement = getInputElement('etn');
+        if (etnElement) {
+            etnElement.value = etn.toString();
+        }
     }
 }
 /**
@@ -379,6 +387,7 @@ function consumeInitialURL() {
 
 function make_iem_tms(title, layername, visible, type) {
     return new Tile({
+        // @ts-ignore
         title,
         visible,
         type,
@@ -389,15 +398,17 @@ function make_iem_tms(title, layername, visible, type) {
 }
 
 function getRADARSource() {
-    const dt = radartimes[$('#timeslider').slider('value')];
+    const dt = radartimes[VanillaSlider.getValue('timeslider')];
     if (dt === undefined) {
         return new XYZ({
             url: '/cache/tile.py/1.0.0/ridge::USCOMP-N0Q-0/{z}/{x}/{y}.png',
         });
     }
     radarTMSLayer.set('title', `@ ${dt.format()}`);
-    const src = escapeHTML($('#radarsource').val());
-    const prod = escapeHTML($('#radarproduct').val());
+    const radarSourceElement = getInputElement('radarsource');
+    const radarProductElement = getInputElement('radarproduct');
+    const src = escapeHTML(radarSourceElement ? radarSourceElement.value : '');
+    const prod = escapeHTML(radarProductElement ? radarProductElement.value : '');
     const url = `/cache/tile.py/1.0.0/ridge::${src}-${prod}-${dt
         .utc()
         .format('YMMDDHHmm')}/{z}/{x}/{y}.png`;
@@ -530,9 +541,8 @@ function updateRADARTimeSlider() {
                     idx = i;
                 }
             });
-            $('#timeslider')
-                .slider('option', 'max', radartimes.length)
-                .slider('value', idx);
+            VanillaSlider.setOption('timeslider', 'max', radartimes.length - 1);
+            VanillaSlider.setValue('timeslider', idx);
         },
     });
 }
@@ -556,7 +566,10 @@ function updateRADARProducts() {
         dataType: 'json',
         success: (data) => {
             // remove previous options
-            $('#radarproduct').empty();
+            const radarProductSelect = getElement('radarproduct');
+            if (radarProductSelect) {
+                radarProductSelect.innerHTML = '';
+            }
             $.each(data.products, (_idx, product) => {
                 $('#radarproduct').append(
                     `<option value="${product.id}">${product.name}</option>`
@@ -600,9 +613,11 @@ function updateRADARSources() {
             // remove previous options
             $('#radarsource').empty();
             $.each(data.radars, (_idx, radar) => {
-                $('#radarsource').append(
-                    `<option value="${radar.id}">${radar.name}</option>`
-                );
+                const radarSourceSelect = getElement('radarsource');
+                if (radarSourceSelect) {
+                    radarSourceSelect.insertAdjacentHTML('beforeend', 
+                        `<option value="${radar.id}">${radar.name}</option>`);
+                }
             });
             if (getState(StateKeys.RADAR)) {
                 $('#radarsource').val(getState(StateKeys.RADAR));
@@ -1001,39 +1016,44 @@ function buildUI() {
             olmap.updateSize();
         }
     });
-    /**
-        $('#radaropacity').slider({
-            min: 0,
-            max: 100,
-            value: 100,
-            slide: (_event, ui) => {
-                radarTMSLayer.setOpacity(parseInt(ui.value) / 100.0);
-            },
-        });
-        $('#timeslider').slider({
-            min: 0,
-            max: 100,
-            change: (_event, ui) => {
-                if (radartimes[ui.value] === undefined) {
-                    return;
-                }
-                setState(StateKeys.RADAR_PRODUCT_TIME, radartimes[ui.value]);
-                radarTMSLayer.setSource(getRADARSource());
-                const label = radartimes[ui.value]
-                    .local()
-                    .format('D MMM YYYY h:mm A');
-                $('#radartime').html(label);
-                updateURL();
-            },
-            slide: (_event, ui) => {
-                const label = radartimes[ui.value]
-                    .local()
-                    .format('D MMM YYYY h:mm A');
-                $('#radartime').html(label);
-                updateURL();
-            },
-        });
-        */
+    
+    // Initialize radar opacity slider
+    new VanillaSlider('radaropacity', {
+        min: 0,
+        max: 100,
+        value: 100,
+        onSlide: (value) => {
+            radarTMSLayer.setOpacity(parseInt(value) / 100.0);
+        }
+    });
+    
+    // Initialize time slider  
+    new VanillaSlider('timeslider', {
+        min: 0,
+        max: 100,
+        onChange: (value) => {
+            if (radartimes[value] === undefined) {
+                return;
+            }
+            setState(StateKeys.RADAR_PRODUCT_TIME, radartimes[value]);
+            radarTMSLayer.setSource(getRADARSource());
+            const label = radartimes[value]
+                .local()
+                .format('D MMM YYYY h:mm A');
+            const radarTimeElement = getElement('radartime');
+            if (radarTimeElement) {
+                radarTimeElement.innerHTML = label;
+            }
+            updateURL();
+        },
+        onSlide: (value) => {
+            const label = radartimes[value]
+                .local()
+                .format('D MMM YYYY h:mm A');
+            $('#radartime').html(label);
+            updateURL();
+        }
+    });
     $('#radarsource').change(() => {
         setState(StateKeys.RADAR, escapeHTML($('#radarsource').val()));
         updateRADARProducts();
