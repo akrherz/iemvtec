@@ -239,8 +239,8 @@ let sbwIntersectionLayer = null;
 let lsrLayer = null;
 let radarTMSLayer = null;
 let radartimes = [];
-let eventTable = null;
-let ugcTable = null;
+const eventTable = null;
+const ugcTable = null;
 let lsrTable = null;
 let sbwLsrTable = null;
 let element = null;
@@ -755,7 +755,7 @@ export function main() {
                 }
             );
             if (feature) {
-                if (feature.get('magnitude') === undefined) return;
+                if (feature.get('magnitude') === undefined) {return;}
                 const coordinates = feature.getGeometry().getCoordinates();
                 popup.setPosition(coordinates);
                 $(element).popover({
@@ -1289,7 +1289,7 @@ export function main() {
         $('#eventtable tbody').on('click', 'tr', function () {
             // this
             const data = eventTable.row(this).data();
-            if (parseInt(data[0], 10) === getETN()) return;
+            if (parseInt(data[0], 10) === getETN()) {return;}
             setETN(data[0]);
             // Switch to the details tab, which will trigger update
             $("#thetabs_tabs a[href='#info']").trigger('click');
