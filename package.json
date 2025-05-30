@@ -1,7 +1,7 @@
 {
   "name": "iemvtec",
   "version": "1.0.0",
-  "description": "VTEC App - Bootstrap 4.6.2 locked for production compatibility",
+  "description": "VTEC App - Bootstrap 3.4.1 locked for production compatibility",
   "scripts": {
     "start": "vite",
     "build": "npm run build:assets && npm run build:content",
@@ -29,7 +29,7 @@
   "dependencies": {
     "@eslint/js": "^9.27.0",
     "@shoelace-style/shoelace": "^2.20.1",
-    "bootstrap": "4.6.2",
+    "bootstrap": "3.4.1",
     "bootstrap-icons": "^1.13.1",
     "datatables.net-dt": "^2.3.1",
     "datatables.net-scroller-dt": "^2.4.3",

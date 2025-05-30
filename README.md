@@ -18,5 +18,5 @@ The build then becomes.
 
 ## Notes
 
-We are tied to bootstrap 4 due to IEM's ISU theme still stuck with that
+We are tied to bootstrap 3 due to IEM's ISU theme still stuck with that
 version.
