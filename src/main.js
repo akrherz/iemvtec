@@ -5,16 +5,23 @@ import 'bootstrap-icons/font/bootstrap-icons.css';
 
 import { Style, Icon, Stroke, Circle, Fill, Text } from 'ol/style';
 import $ from 'jquery';
+// Make jQuery available globally for Bootstrap 3 BEFORE importing Bootstrap
+if (typeof window !== 'undefined') {
+    // @ts-ignore
+    window.$ = window.jQuery = $;
+}
 import { Overlay, Map, View } from 'ol';
 import { Tile, Vector } from 'ol/layer';
 import { Vector as VectorSource, XYZ, OSM } from 'ol/source';
 import { GeoJSON } from 'ol/format';
 import { transform } from 'ol/proj';
-import { requireInputElement, getElement, getInputElement } from './domUtils.js';
+import { requireInputElement, requireElement } from './domUtils.js';
 import { iemdata } from './iemdata.js';
 import { setState, getState, StateKeys } from './state.js';
 import { VanillaSlider } from './vanillaSlider.js';
 import moment from 'moment';
+import DataTable from 'datatables.net-dt';
+import 'datatables.net-dt/css/dataTables.dataTables.css';
 
 let olmap = null;
 let productVectorCountyLayer = null;
@@ -23,8 +30,8 @@ let sbwIntersectionLayer = null;
 let lsrLayer = null;
 let radarTMSLayer = null;
 let radartimes = [];
-const eventTable = null;
-const ugcTable = null;
+let eventTable = null;
+let ugcTable = null;
 let lsrTable = null;
 let sbwLsrTable = null;
 let element = null;
@@ -130,7 +137,7 @@ function updateURL() {
     ) {
         url += `/radar/${getState(StateKeys.RADAR)}-${getState(
             StateKeys.RADAR_PRODUCT
-        )}-${radar_product_time.utc().format('YMMDDHHmm')}`;
+        )}-${/** @type {any} */ (radar_product_time).utc().format('YMMDDHHmm')}`;
     }
     url += `/tab/${getState(StateKeys.ACTIVE_TAB)}`;
     if (getState(StateKeys.ACTIVE_UPDATE) !== null) {
@@ -144,39 +151,33 @@ function updateURL() {
  * https://stackoverflow.com/questions/2044616
  */
 export function selectElementContents(elid) {
-    const el = document.getElementById(elid);
-    const body = document.body;
+    const el = requireElement(elid);
     let range = null;
     let sel = null;
     if (document.createRange && window.getSelection) {
         range = document.createRange();
         sel = window.getSelection();
-        sel.removeAllRanges();
-        try {
-            range.selectNodeContents(el);
-            sel.addRange(range);
-        } catch {
-            range.selectNode(el);
-            sel.addRange(range);
+        if (sel) {
+            sel.removeAllRanges();
+            try {
+                range.selectNodeContents(el);
+                sel.addRange(range);
+            } catch {
+                range.selectNode(el);
+                sel.addRange(range);
+            }
         }
         document.execCommand('copy');
-    } else if (body.createTextRange) {
-        range = body.createTextRange();
-        range.moveToElementText(el);
-        range.select();
-        range.execCommand('Copy');
     }
 }
 
 function getSignificance() {
-    const significanceElement = getInputElement('significance');
+    const significanceElement = requireInputElement('significance');
     return escapeHTML(significanceElement ? significanceElement.value : '');
 }
 function setSignificance(significance) {
-    const significanceElement = getInputElement('significance');
-    if (significanceElement) {
-        significanceElement.value = escapeHTML(significance);
-    }
+    const significanceElement = requireInputElement('significance');
+    significanceElement.value = escapeHTML(significance);
 }
 //----------------
 function getETN() {
@@ -185,10 +186,8 @@ function getETN() {
 function setETN(etn) {
     etn = parseInt(etn, 10);
     if (etn > 0 && etn < 10000) {
-        const etnElement = getInputElement('etn');
-        if (etnElement) {
-            etnElement.value = etn.toString();
-        }
+        const etnElement = requireInputElement('etn');
+        etnElement.value = etn.toString();
     }
 }
 /**
@@ -252,10 +251,10 @@ const textStyle = new Style({
 });
 
 function getWFO() {
-    return escapeHTML(getInputElement('wfo').value);
+    return escapeHTML(requireInputElement('wfo').value);
 }
 function setWFO(wfo) {
-    getInputElement('wfo').value = escapeHTML(wfo);
+    requireInputElement('wfo').value = escapeHTML(wfo);
 }
 function getYear() {
     return parseInt(requireInputElement('year').value, 10);
@@ -405,8 +404,8 @@ function getRADARSource() {
         });
     }
     radarTMSLayer.set('title', `@ ${dt.format()}`);
-    const radarSourceElement = getInputElement('radarsource');
-    const radarProductElement = getInputElement('radarproduct');
+    const radarSourceElement = requireInputElement('radarsource');
+    const radarProductElement = requireInputElement('radarproduct');
     const src = escapeHTML(radarSourceElement ? radarSourceElement.value : '');
     const prod = escapeHTML(radarProductElement ? radarProductElement.value : '');
     const url = `/cache/tile.py/1.0.0/ridge::${src}-${prod}-${dt
@@ -421,10 +420,12 @@ function buildMap() {
     element = document.getElementById('popup');
     // Build up the mapping
     radarTMSLayer = new Tile({
+        // @ts-ignore
         title: 'NEXRAD Base Reflectivity',
         source: getRADARSource(),
     });
     productVectorCountyLayer = new Vector({
+        // @ts-ignore
         title: 'VTEC Product Geometry',
         style: () => {
             return [
@@ -442,6 +443,7 @@ function buildMap() {
     });
 
     sbwIntersectionLayer = new Vector({
+        // @ts-ignore
         title: 'SBW County Intersection',
         style: sbwIntersectionStyle,
         source: new VectorSource({
@@ -450,11 +452,12 @@ function buildMap() {
     });
 
     productVectorPolygonLayer = new Vector({
+        // @ts-ignore
         title: 'VTEC Product Polygon',
         style: (feature) => {
             sbwStyle[1]
                 .getStroke()
-                .setColor(sbwLookup[feature.get('phenomena')]);
+                ?.setColor(sbwLookup[feature.get('phenomena')]);
             return sbwStyle;
         },
         source: new VectorSource({
@@ -463,12 +466,13 @@ function buildMap() {
     });
 
     lsrLayer = new Vector({
+        // @ts-ignore
         title: 'Local Storm Reports',
         style: (feature) => {
             if (feature.get('type') === 'S' || feature.get('type') === 'R') {
                 textStyle
                     .getText()
-                    .setText(feature.get('magnitude').toString());
+                    ?.setText(feature.get('magnitude').toString());
                 return textStyle;
             }
             let url = lsrLookup[feature.get('type')];
@@ -516,7 +520,9 @@ function updateRADARTimeSlider() {
         data: {
             radar: $('#radarsource').val(),
             product: $('#radarproduct').val(),
+            // @ts-ignore
             start: getState(StateKeys.ISSUE).utc().format(),
+            // @ts-ignore
             end: getState(StateKeys.EXPIRE).utc().format(),
             operation: 'list',
         },
@@ -551,14 +557,15 @@ function updateRADARTimeSlider() {
  * Query radar service for available RADAR products and update the UI
  */
 function updateRADARProducts() {
-    // operation=products&radar=USCOMP&start=2012-01-23T08%3A10Z
+    const issue = getState(StateKeys.ISSUE);
+    if (issue === null) {
+        return;
+    }
     $.ajax({
         data: {
             radar: $('#radarsource').val(),
-            start:
-                getState(StateKeys.ISSUE) !== null
-                    ? getState(StateKeys.ISSUE).utc().format()
-                    : '',
+            // @ts-ignore
+            start: issue.utc().format(),
             operation: 'products',
         },
         url: '/json/radar.py',
@@ -566,17 +573,16 @@ function updateRADARProducts() {
         dataType: 'json',
         success: (data) => {
             // remove previous options
-            const radarProductSelect = getElement('radarproduct');
-            if (radarProductSelect) {
-                radarProductSelect.innerHTML = '';
-            }
+            const radarProductSelect = requireElement('radarproduct');
+            radarProductSelect.innerHTML = '';
             $.each(data.products, (_idx, product) => {
                 $('#radarproduct').append(
                     `<option value="${product.id}">${product.name}</option>`
                 );
             });
-            if (getState(StateKeys.RADAR_PRODUCT)) {
-                $('#radarproduct').val(getState(StateKeys.RADAR_PRODUCT));
+            const radarProduct = getState(StateKeys.RADAR_PRODUCT);
+            if (radarProduct) {
+                $('#radarproduct').val(radarProduct);
             } else {
                 setState(StateKeys.ISSUE, escapeHTML($('#radarproduct').val()));
             }
@@ -600,10 +606,8 @@ function updateRADARSources() {
         data: {
             lat: center[1],
             lon: center[0],
-            start:
-                getState(StateKeys.ISSUE) !== null
-                    ? getState(StateKeys.ISSUE).utc().format()
-                    : '',
+            // @ts-ignore
+            start:getState(StateKeys.ISSUE).utc().format(),
             operation: 'available',
         },
         url: '/json/radar.py',
@@ -613,14 +617,13 @@ function updateRADARSources() {
             // remove previous options
             $('#radarsource').empty();
             $.each(data.radars, (_idx, radar) => {
-                const radarSourceSelect = getElement('radarsource');
-                if (radarSourceSelect) {
-                    radarSourceSelect.insertAdjacentHTML('beforeend', 
+                const radarSourceSelect = requireElement('radarsource');
+                radarSourceSelect.insertAdjacentHTML('beforeend', 
                         `<option value="${radar.id}">${radar.name}</option>`);
-                }
             });
-            if (getState(StateKeys.RADAR)) {
-                $('#radarsource').val(getState(StateKeys.RADAR));
+            const radar = getState(StateKeys.RADAR);
+            if (radar) {
+                $('#radarsource').val(radar);
             } else {
                 setState(StateKeys.ISSUE, escapeHTML($('#radarsource').val()));
             }
@@ -883,7 +886,13 @@ function remarkformat(d) {
     return `<div style="margin-left: 10px;"><strong>Remark:</strong> ${d.remark}</div>`;
 }
 function makeLSRTable(div) {
-    const table = $(`#${div}`).DataTable({
+    const tableElement = document.getElementById(div);
+    if (!tableElement) {
+        console.error(`Table element with id ${div} not found`);
+        return null;
+    }
+    
+    const table = new DataTable(tableElement, {
         select: 'single',
         columns: [
             {
@@ -905,30 +914,48 @@ function makeLSRTable(div) {
         ],
         order: [[1, 'asc']],
     });
+    
     // Add event listener for opening and closing details
-    $(`#${div} tbody`).on('click', 'td.details-control', function () {
-        // this
-        const tr = $(this).closest('tr');
-        const tdi = tr.find('i.fa');
+    tableElement.addEventListener('click', (e) => {
+        const target = e.target;
+        if (!(target instanceof HTMLElement)) {
+            return;
+        }
+        
+        const td = target.closest('td.details-control');
+        if (!td) {
+            return;
+        }
+        
+        const tr = td.closest('tr');
+        if (!tr) {
+            return;
+        }
+        
+        const icon = tr.querySelector('i.fa');
+        if (!icon) {
+            return;
+        }
+        
         const row = table.row(tr);
 
         if (row.child.isShown()) {
             // This row is already open - close it
             row.child.hide();
-            tr.removeClass('shown');
-            tdi.first().removeClass('fa-minus-square');
-            tdi.first().addClass('fa-plus-square');
+            tr.classList.remove('shown');
+            icon.classList.remove('fa-minus-square');
+            icon.classList.add('fa-plus-square');
         } else {
             // Open this row
             row.child(remarkformat(row.data())).show();
-            tr.addClass('shown');
-            tdi.first().removeClass('fa-plus-square');
-            tdi.first().addClass('fa-minus-square');
+            tr.classList.add('shown');
+            icon.classList.remove('fa-plus-square');
+            icon.classList.add('fa-minus-square');
         }
     });
 
     table.on('user-select', (e, _dt, _type, cell) => {
-        if ($(cell.node()).hasClass('details-control')) {
+        if (cell.node().classList.contains('details-control')) {
             e.preventDefault();
         }
     });
@@ -939,10 +966,15 @@ function buildUI() {
     // One time build up of UI and handlers
 
     // When tabs are clicked
-    $('#thetabs_tabs a').click(function () {
-        // this
-        setState(StateKeys.ACTIVE_TAB, this.href.split('#')[1]);
-        updateURL();
+    const tabLinks = document.querySelectorAll('#thetabs_tabs a');
+    tabLinks.forEach(link => {
+        link.addEventListener('click', (event) => {
+            const target = event.currentTarget;
+            if (target instanceof HTMLLinkElement) {
+                setState(StateKeys.ACTIVE_TAB, target.href.split('#')[1]);
+                updateURL();
+            }
+        });
     });
 
     let html = '';
@@ -990,25 +1022,47 @@ function buildUI() {
     });
 
     $('#myform-submit').click(function () {
-        // this
         updateURL();
         $(this).blur();
     });
-    //ugcTable = $('#ugctable').DataTable();
+    
+    // Initialize tables using modern DataTable
+    const ugcTableElement = document.getElementById('ugctable');
+    if (ugcTableElement) {
+        ugcTable = new DataTable(ugcTableElement);
+    }
+    
     lsrTable = makeLSRTable('lsrtable');
     sbwLsrTable = makeLSRTable('sbwlsrtable');
 
-    //eventTable = $('#eventtable').DataTable();
-    $('#eventtable tbody').on('click', 'tr', function () {
-        // this
-        const data = eventTable.row(this).data();
-        if (parseInt(data[0], 10) === getETN()) {
-            return;
-        }
-        setETN(data[0]);
-        // Switch to the details tab, which will trigger update
-        $("#thetabs_tabs a[href='#info']").trigger('click');
-    });
+    const eventTableElement = document.getElementById('eventtable');
+    if (eventTableElement) {
+        eventTable = new DataTable(eventTableElement);
+        
+        // Add click handler for event table rows
+        eventTableElement.addEventListener('click', (e) => {
+            const target = e.target;
+            if (!(target instanceof HTMLElement)) {
+                return;
+            }
+            
+            const tr = target.closest('tr');
+            if (!tr || !eventTable) {
+                return;
+            }
+            
+            const data = eventTable.row(tr).data();
+            if (parseInt(data[0], 10) === getETN()) {
+                return;
+            }
+            setETN(data[0]);
+            // Switch to the details tab, which will trigger update
+            const infoTab = document.querySelector("#thetabs_tabs a[href='#info']");
+            if (infoTab instanceof HTMLElement) {
+                infoTab.click();
+            }
+        });
+    }
 
     $('a[data-toggle="tab"]').on('shown.bs.tab', (e) => {
         const target = $(e.target).attr('href'); // activated tab
@@ -1040,10 +1094,8 @@ function buildUI() {
             const label = radartimes[value]
                 .local()
                 .format('D MMM YYYY h:mm A');
-            const radarTimeElement = getElement('radartime');
-            if (radarTimeElement) {
-                radarTimeElement.innerHTML = label;
-            }
+            const radarTimeElement = requireElement('radartime');
+            radarTimeElement.innerHTML = label;
             updateURL();
         },
         onSlide: (value) => {
@@ -1101,7 +1153,14 @@ function buildUI() {
  * Entry point
  */
 export function main() {
-    //----------------
+    console.error('IEM VTEC Map Application');
+
+    // Step 1, activate UI components
+    buildUI();
+    // Step 2, build the map
+    buildMap();
+    // Step 3, consume the URL to resolve the data to load
+    consumeInitialURL();
 
     /**
      * Listen for user hitting the back and forward buttons
@@ -1119,6 +1178,7 @@ export function main() {
         }),
         layers: [
             new Tile({
+                // @ts-ignore
                 title: 'OpenStreetMap',
                 visible: true,
                 source: new OSM(),
@@ -1170,15 +1230,4 @@ export function main() {
         }
     });
 
-    // Step 1, activate UI components
-    buildUI();
-    // Step 2, build the map
-    buildMap();
-    // Step 3, consume the URL to resolve the data to load
-    consumeInitialURL();
 }
-
-document.addEventListener('DOMContentLoaded', () => {
-    // Initialize the main function
-    main();
-});

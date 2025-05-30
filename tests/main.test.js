@@ -49,6 +49,22 @@ jest.mock('../src/vanillaSlider.js', () => ({
     VanillaSlider: class MockVanillaSlider {}
 }));
 
+// Mock DataTable
+jest.mock('datatables.net-dt', () => {
+    return class MockDataTable {
+        constructor() {}
+        clear() { return this; }
+        row = {
+            add: jest.fn(() => this)
+        };
+        draw() { return this; }
+        on() { return this; }
+    };
+});
+
+// Mock CSS imports
+jest.mock('datatables.net-dt/css/dataTables.dataTables.css', () => ({}));
+
 /**
  * Basic test to verify main.js module structure
  * This test focuses on the module interface rather than implementation details

@@ -15,3 +15,8 @@ The build then becomes.
 1. `src/_index_content.html` contains the &gt;main&lt; HTML static content.
 2. `npm run build` generates the assets and a manifest used by the IEM website
    to load the proper JS/CSS along with the static `_index_content.html` file.
+
+## Notes
+
+We are tied to bootstrap 3 due to IEM's ISU theme still stuck with that
+version.
