@@ -20,9 +20,19 @@ export default defineConfig(({ command }) => ({
       '/vtec': {
         target: 'http://localhost:8080',
         bypass: (req) => {
-          if (req.url === '/vtec/_index_content.html') {
+          const url = req?.url;
+          if (!url) return undefined;
+          
+          // Serve JavaScript modules, CSS, and other assets directly from src
+          if (/\.(js|css|png|jpg|jpeg|gif|svg|woff|woff2|ttf|eot)(\?.*)?$/.test(url)) {
+            const cleanUrl = url.replace('/vtec/', '/').split('?')[0];
+            return cleanUrl;
+          }
+          
+          if (url === '/vtec/_index_content.html') {
             return '/_index_content.html';
           }
+          return undefined;
         }
       }
     }

@@ -1,6 +1,20 @@
 // DOM utility functions to reduce boilerplate
 
 /**
+ * Escape HTML special characters to prevent XSS attacks
+ * @param {string} val - String to escape
+ * @returns {string} HTML-escaped string
+ */
+export function escapeHTML(val) {
+    return val
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+}
+
+/**
  * Safely get an element by ID with type checking
  * @param {string} id - Element ID
  * @param {Function} [ElementType] - Expected element constructor (e.g., HTMLInputElement)
