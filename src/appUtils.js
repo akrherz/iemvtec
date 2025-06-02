@@ -6,6 +6,19 @@ import { Vector as VectorSource } from 'ol/source';
 import { GeoJSON } from 'ol/format';
 import { requireElement } from './domUtils.js';
 import { getWFO, getPhenomena, getSignificance, getETN, getYear } from './vtecFields.js';
+import { setState, StateKeys } from './state.js';
+import { updateURL } from './urlUtils.js';
+
+/**
+ * called from HTML tag
+ * @param {String} val
+ */
+export function setUpdate(val) {
+    // skipcq
+    setState(StateKeys.ACTIVE_UPDATE, val);
+    updateURL();
+}
+
 
 /**
  * Utility function to fetch JSON data with URLSearchParams
