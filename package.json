@@ -27,7 +27,7 @@
     "vite": "^6.3.5"
   },
   "dependencies": {
-    "@eslint/js": "^9.27.0",
+    "@eslint/js": "^9.28.0",
     "@shoelace-style/shoelace": "^2.20.1",
     "bootstrap": "3.4.1",
     "bootstrap-icons": "^1.13.1",
