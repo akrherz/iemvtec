@@ -16,3 +16,5 @@ You can abbreviate the rule description to a single word or phrase.
   dom elements are expected to exist.
 - Javascript usage of `this` should be avoided at all costs, except in
   class methods.
+- `src/main.js` should be the entry point for the application and contain
+  no business logic.
