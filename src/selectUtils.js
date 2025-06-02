@@ -1,7 +1,7 @@
 /**
  * Select element utility functions for building options and populating selects
  */
-import { requireElement, requireSelectElement, escapeHTML } from './domUtils.js';
+import { requireElement, requireSelectElement } from './domUtils.js';
 
 /**
  * Utility function to build HTML options for select elements

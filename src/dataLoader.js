@@ -3,7 +3,7 @@
  */
 import { fetchWithParams, getData } from './appUtils.js';
 import { createTabHTML, createTabPaneHTML } from './tabUtils.js';
-import { requireElement, escapeHTML } from './domUtils.js';
+import { requireElement } from './domUtils.js';
 import { setState, getState, StateKeys } from './state.js';
 import { loadVTECGeometry } from './geometryLoader.js';
 import { getSignificance, getETN, getWFO, getYear, getPhenomena } from './vtecFields.js';
