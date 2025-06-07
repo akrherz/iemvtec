@@ -62,21 +62,33 @@ export function urlencode() {
  * @returns {void}
  */
 export function updateURL() {
-    let url = `/vtec/event/${vtecString()}`;
+    const params = new URLSearchParams();
+    params.set('year', getYear());
+    params.set('wfo', getWFO());
+    params.set('phenomena', getPhenomena());
+    params.set('significance', getSignificance());
+    params.set('eventid', getETN().toString());
+    
+    const activeTab = getState(StateKeys.ACTIVE_TAB);
+    if (activeTab) {
+        params.set('tab', activeTab);
+    }
+    
     const radar_product_time = getState(StateKeys.RADAR_PRODUCT_TIME);
-    if (
-        radar_product_time !== null &&
-        getState(StateKeys.RADAR_PRODUCT) !== null &&
-        getState(StateKeys.RADAR) !== null
-    ) {
-        url += `/radar/${getState(StateKeys.RADAR)}-${getState(
-            StateKeys.RADAR_PRODUCT
-        )}-${/** @type {any} */ (radar_product_time).utc().format('YMMDDHHmm')}`;
+    const radarProduct = getState(StateKeys.RADAR_PRODUCT);
+    const radar = getState(StateKeys.RADAR);
+    if (radar_product_time !== null && radarProduct && radar) {
+        params.set('radar', radar);
+        params.set('radar_product', radarProduct);
+        params.set('radar_time', /** @type {any} */ (radar_product_time).utc().format('YYYYMMDDHHmm'));
     }
-    url += `/tab/${getState(StateKeys.ACTIVE_TAB)}`;
-    if (getState(StateKeys.ACTIVE_UPDATE) !== null) {
-        url += `/update/${getState(StateKeys.ACTIVE_UPDATE)}`;
+    
+    const activeUpdate = getState(StateKeys.ACTIVE_UPDATE);
+    if (activeUpdate) {
+        params.set('update', activeUpdate);
     }
+    
+    const url = `?${params.toString()}`;
     document.title = `VTEC Event ${vtecString()}`;
     navigateTo(url);
 }
@@ -124,12 +136,73 @@ function setActiveTab(tab) {
 }
 
 /**
+ * Parse URL query parameters and update app state
+ * @param {URLSearchParams} params - The URL search parameters
+ * @param {Function} [loadTabsCallback] - Function to call when VTEC changes
+ * @returns {void}
+ */
+function handleQueryParams(params, loadTabsCallback) {
+    const year = params.get('year');
+    const wfo = params.get('wfo');
+    const phenomena = params.get('phenomena');
+    const significance = params.get('significance');
+    const eventid = params.get('eventid');
+    
+    if (year && wfo && phenomena && significance && eventid) {
+        setYear(year);
+        // Fix bad WFOs
+        if (wfoLookup[wfo] !== undefined) {
+            setWFO(wfoLookup[wfo]);
+        } else {
+            setWFO(wfo);
+        }
+        setPhenomena(phenomena);
+        setSignificance(significance);
+        setETN(eventid);
+    }
+    
+    const radar = params.get('radar');
+    const radarProduct = params.get('radar_product');
+    const radarTime = params.get('radar_time');
+    if (radar && radarProduct && radarTime) {
+        setState(StateKeys.RADAR, escapeHTML(radar));
+        setState(StateKeys.RADAR_PRODUCT, escapeHTML(radarProduct));
+        setState(
+            StateKeys.RADAR_PRODUCT_TIME,
+            moment.utc(escapeHTML(radarTime), 'YYYYMMDDHHmm')
+        );
+    }
+    
+    const tab = params.get('tab');
+    if (tab) {
+        setActiveTab(tab);
+    }
+    
+    const update = params.get('update');
+    if (update) {
+        setUpdateTab(update);
+    }
+    
+    if (loadTabsCallback && loadedVTEC !== vtecString()) {
+        loadTabsCallback();
+    }
+}
+
+/**
  * Process the URL and update the app state
  * @param {String} url
  * @param {Function} [loadTabsCallback] - Function to call when VTEC changes
  * @returns {void}
  */
 export function handleURLChange(url, loadTabsCallback) {
+    // Check if this is a query parameter URL (new format)
+    const urlObj = new URL(url, window.location.origin);
+    if (urlObj.search) {
+        handleQueryParams(urlObj.searchParams, loadTabsCallback);
+        return;
+    }
+    
+    // Handle legacy RESTish URLs
     const pathSegments = url.split('/').filter((segment) => segment);
     if (pathSegments.length < 3) {
         return;
@@ -171,6 +244,9 @@ export function handleURLChange(url, loadTabsCallback) {
     if (loadTabsCallback && loadedVTEC !== vtecString()) {
         loadTabsCallback();
     }
+    
+    // Migrate legacy URL to new format
+    updateURL();
 }
 
 /**
@@ -179,21 +255,54 @@ export function handleURLChange(url, loadTabsCallback) {
  * @returns {void}
  */
 export function consumeInitialURL(loadTabsCallback) {
-    // Assume we start with /event, which is true via Apache rewrite
-    if (window.location.pathname.startsWith('/vtec/event')) {
+    // Check for query parameters first (new format)
+    if (window.location.search) {
+        handleURLChange(window.location.href, loadTabsCallback);
+        return;
+    }
+    
+    // Check for RESTish URLs (legacy format)
+    if (window.location.pathname.startsWith('/event')) {
         handleURLChange(window.location.pathname, loadTabsCallback);
         return;
     }
-    // Convert the hashlink to a URL
+    
+    // Handle hash links (oldest legacy format)
     const tokens = window.location.href.split('#');
     if (tokens.length === 1) {
+        // No URL parameters - this is a fresh visit to /vtec
+        // Initialize the UI but don't load any specific event data
+        // Check if we have valid form defaults and should load initial data
+        if (loadTabsCallback && getYear() && getWFO() && getPhenomena() && getSignificance() && getETN()) {
+            loadTabsCallback();
+        }
         return;
     }
     const subtokens = tokens[1].split('/');
-    let url = `/vtec/event/${subtokens[0]}`;
-    if (subtokens.length > 1) {
-        url += `/radar/${subtokens[1]}`;
+    
+    // Parse the hash into query parameters and migrate
+    const params = new URLSearchParams();
+    const vtecTokens = subtokens[0].split('-');
+    if (vtecTokens.length === 7) {
+        params.set('year', vtecTokens[0]);
+        params.set('wfo', vtecTokens[3]);
+        params.set('phenomena', vtecTokens[4]);
+        params.set('significance', vtecTokens[5]);
+        params.set('eventid', vtecTokens[6]);
     }
-    url += '/tab/info';
-    navigateTo(url);
+    
+    if (subtokens.length > 1) {
+        // Handle radar info from hash
+        const radarTokens = subtokens[1].split('-');
+        if (radarTokens.length === 3) {
+            params.set('radar', radarTokens[0]);
+            params.set('radar_product', radarTokens[1]);
+            params.set('radar_time', radarTokens[2]);
+        }
+    }
+    
+    params.set('tab', 'info');
+    
+    const migratedUrl = `?${params.toString()}`;
+    navigateTo(migratedUrl);
 }

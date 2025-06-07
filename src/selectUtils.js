@@ -11,7 +11,7 @@ import { requireElement, requireSelectElement } from './domUtils.js';
  */
 export function buildSelectOptions(data, template = '<option value="{value}">{text}</option>') {
     return data.map(([value, text]) => 
-        template.replace('{value}', value).replace('{text}', text)
+        template.replaceAll('{value}', value).replaceAll('{text}', text)
     ).join('');
 }
 

@@ -1,13 +1,52 @@
 /**
  * Data loading utilities for populating tables with VTEC-related data
  */
+import { getLSRTable, getSBWLSRTable, getEventTable } from './tableUtils.js';
 import { fetchWithParams, getData } from './appUtils.js';
 import { createTabHTML, createTabPaneHTML } from './tabUtils.js';
-import { requireElement } from './domUtils.js';
+import { requireElement, requireSelectElement, escapeHTML } from './domUtils.js';
 import { setState, getState, StateKeys } from './state.js';
 import { loadVTECGeometry } from './geometryLoader.js';
 import { getSignificance, getETN, getWFO, getYear, getPhenomena } from './vtecFields.js';
 import moment from 'moment';
+import { setLoadedVTEC, vtecString } from './urlUtils.js';
+import { getUGCTable } from './ugcTable.js';
+
+/**
+ * Make web services calls to get VTEC data and load the tabs with information
+ */
+export function loadTabs() {
+    setLoadedVTEC(vtecString());
+    
+    // Setup image displays
+    setupImageDisplays();
+    
+    // Setup VTEC label
+    const wfoSelect = requireSelectElement('wfo');
+    const phenomenaSelect = requireSelectElement('phenomena');
+    const significanceSelect = requireSelectElement('significance');
+    
+    requireElement('vtec_label').innerHTML =
+        `${getYear()} ${escapeHTML(wfoSelect.selectedOptions[0].text)}
+            ${escapeHTML(phenomenaSelect.selectedOptions[0].text)}
+            ${escapeHTML(significanceSelect.selectedOptions[0].text)}
+            Number ${getETN()}`;
+    
+    // Load VTEC event data and populate tabs
+    loadVTECEventData(getUGCTable(), getLSRTable(), getSBWLSRTable());
+    
+    // Load VTEC events table data
+    loadVTECEventsData(getEventTable());
+    
+    // Set the active tab to 'Event Info' if we are on the first tab
+    const firstTab = document.querySelector('#thetabs_tabs a');
+    if (firstTab && firstTab.getAttribute('href') === '#help') {
+        const infoTab = document.querySelector("#thetabs_tabs a[href='#info']");
+        if (infoTab instanceof HTMLElement) {
+            infoTab.click();
+        }
+    }
+}
 
 /**
  * Load VTEC event data and populate the dynamic tabs interface
@@ -16,7 +55,7 @@ import moment from 'moment';
  * @param {any} sbwLsrTable - DataTable instance for SBW LSR data
  */
 export function loadVTECEventData(ugcTable, lsrTable, sbwLsrTable) {
-    fetchWithParams('/json/vtec_event.py', getData())
+    fetchWithParams('https://mesonet.agron.iastate.edu/json/vtec_event.py', getData())
         .then((data) => {
             if (!data.event_exists) {
                 requireElement('info_event_found').style.display = 'none';
@@ -87,7 +126,7 @@ export function loadVTECEventData(ugcTable, lsrTable, sbwLsrTable) {
  * @param {any} eventTable - DataTable instance for events data
  */
 export function loadVTECEventsData(eventTable) {
-    fetchWithParams('/json/vtec_events.py', getData())
+    fetchWithParams('https://mesonet.agron.iastate.edu/json/vtec_events.py', getData())
         .then((data) => {
             eventTable.clear();
             data.events.forEach((_idx, vtec) => {

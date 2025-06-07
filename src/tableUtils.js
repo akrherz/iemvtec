@@ -3,6 +3,39 @@
  */
 import DataTable from 'datatables.net-dt';
 
+let lsrTable = null;
+let sbwLsrTable = null;
+let eventTable = null;
+
+export function getEventTable() {
+    return eventTable;
+}
+export function getLSRTable() {
+    return lsrTable;
+}
+export function getSBWLSRTable() {
+    return sbwLsrTable;
+}
+
+export function initEventTable() {
+
+     const eventTableElement = document.getElementById('eventtable');
+    if (eventTableElement) {
+        eventTable = new DataTable(eventTableElement, {
+            columns: [
+                { data: 0 }, // ID
+                { data: 1 }, // Product Issued
+                { data: 2 }, // VTEC Issued
+                { data: 3 }, // Initial Expire
+                { data: 4 }, // VTEC Expire
+                { data: 5 }, // Area km**2
+                { data: 6 }, // Locations
+                { data: 7 }  // Signature
+            ]
+        });
+    }
+}
+
 /**
  * Format function for displaying LSR remark details
  * @param {Object} d - The original data object for the row
@@ -15,9 +48,8 @@ function remarkformat(d) {
 /**
  * Create an LSR DataTable with expandable row details
  * @param {string} div - The ID of the table element
- * @returns {DataTable|null} The DataTable instance or null if element not found
  */
-export function makeLSRTable(div) {
+function makeLSRTable(div) {
     const tableElement = document.getElementById(div);
     if (!tableElement) {
         console.error(`Table element with id ${div} not found`);
@@ -69,7 +101,7 @@ export function makeLSRTable(div) {
             return;
         }
         
-        const row = table.row(tr);
+        const row = lsrTable.row(tr);
 
         if (row.child.isShown()) {
             // This row is already open - close it
@@ -91,6 +123,10 @@ export function makeLSRTable(div) {
             e.preventDefault();
         }
     });
-    
     return table;
+}
+
+export function initLSRTables(){
+    lsrTable = makeLSRTable('lsrtable');
+    sbwLsrTable = makeLSRTable('sbwlsrtable');
 }

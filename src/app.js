@@ -20,8 +20,8 @@ class VTECApp {
 
     async loadDevContent() {
         try {
-            // In development, try to load content from your existing server
-            const response = await fetch('/vtec/_index_content.html');
+            // In development, load content directly from the src directory
+            const response = await fetch('/_index_content.html');
             if (response.ok) {
                 const content = await response.text();
                 const contentEl = document.getElementById('vtec-content');
@@ -29,7 +29,7 @@ class VTECApp {
                     contentEl.innerHTML = content;
                 }
             } else {
-                console.log('Development: Could not load content from Python server');
+                console.log('Development: Could not load content from file');
                 // Show development placeholder
                 this.showDevPlaceholder();
             }

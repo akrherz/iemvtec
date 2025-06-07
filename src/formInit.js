@@ -13,7 +13,8 @@ import { buildSelectOptions, populateSelect } from './selectUtils.js';
  */
 export function initializeWFOSelect() {
     const wfoSelect = requireSelectElement('wfo');
-    wfoSelect.innerHTML += buildSelectOptions(iemdata.wfos, '<option value="{value}">[{value}] {text}</option>');
+    const options = buildSelectOptions(iemdata.wfos, '<option value="{value}">[{value}] {text}</option>');
+    wfoSelect.innerHTML += options;
     wfoSelect.value = 'KDMX';
 }
 
@@ -52,9 +53,11 @@ export function initializeETN() {
  * Initialize all form controls with their default values and options
  */
 export function initializeForm() {
+    console.log('Starting form initialization...');
     initializeWFOSelect();
     initializePhenomenaSelect();
     initializeSignificanceSelect();
     initializeYearSelect();
     initializeETN();
+    console.log('Form initialization completed');
 }
