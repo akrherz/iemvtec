@@ -21,7 +21,7 @@ export function loadVTECGeometry(lsrTable, sbwLsrTable) {
     
     // County geometry
     const countyPayload = { ...basePayload, sbw: 0, lsrs: 0 };
-    fetchWithParams('/geojson/vtec_event.py', countyPayload)
+    fetchWithParams('https://mesonet.agron.iastate.edu/geojson/vtec_event.py', countyPayload)
         .then((geodata) => {
             getProductVectorCountyLayer().setSource(createGeoJSONVectorSource(geodata));
             const ee = getProductVectorCountyLayer().getSource().getExtent();
@@ -37,7 +37,7 @@ export function loadVTECGeometry(lsrTable, sbwLsrTable) {
     const payload2 = getData();
     payload2.sbw = 1;
     payload2.lsrs = 0;
-    fetchWithParams('/geojson/vtec_event.py', payload2)
+    fetchWithParams('https://mesonet.agron.iastate.edu/geojson/vtec_event.py', payload2)
         .then(geodata => {
             getProductVectorPolygonLayer().setSource(createGeoJSONVectorSource(geodata));
         })
@@ -46,7 +46,7 @@ export function loadVTECGeometry(lsrTable, sbwLsrTable) {
         });
     
     // Intersection data
-    fetchWithParams('/geojson/sbw_county_intersect.geojson', basePayload)
+    fetchWithParams('https://mesonet.agron.iastate.edu/geojson/sbw_county_intersect.geojson', basePayload)
         .then(geodata => {
             getSBWIntersectionLayer().setSource(createGeoJSONVectorSource(geodata));
         })
@@ -58,7 +58,7 @@ export function loadVTECGeometry(lsrTable, sbwLsrTable) {
     const payload3 = getData();
     payload3.sbw = 0;
     payload3.lsrs = 1;
-    fetchWithParams('/geojson/vtec_event.py', payload3)
+    fetchWithParams('https://mesonet.agron.iastate.edu/geojson/vtec_event.py', payload3)
         .then(geodata => {
             getLSRLayer().setSource(createGeoJSONVectorSource(geodata));
             lsrTable.clear();
@@ -74,7 +74,7 @@ export function loadVTECGeometry(lsrTable, sbwLsrTable) {
     
     // SBW LSRs
     const sbwLsrPayload = { ...basePayload, sbw: 1, lsrs: 1 };
-    fetchWithParams('/geojson/vtec_event.py', sbwLsrPayload)
+    fetchWithParams('https://mesonet.agron.iastate.edu/geojson/vtec_event.py', sbwLsrPayload)
         .then(geodata => {
             sbwLsrTable.clear();
             geodata.features.forEach(feat => {

@@ -1,6 +1,7 @@
 import './style.css';
 import 'ol/ol.css';
 import 'bootstrap/dist/css/bootstrap.css';
+import 'bootstrap/dist/js/bootstrap.bundle.js';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import 'datatables.net-dt/css/dataTables.dataTables.css';
 

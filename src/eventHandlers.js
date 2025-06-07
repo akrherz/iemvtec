@@ -57,26 +57,23 @@ function createSelectHandler(stateKey, valueExtractor, additionalAction) {
  * Setup tab navigation event handlers
  */
 export function setupTabHandlers() {
-    // Main tab navigation
-    const tabLinks = document.querySelectorAll('#thetabs_tabs a');
-    tabLinks.forEach(link => {
-        link.addEventListener('click', (event) => {
-            const target = event.currentTarget;
-            if (target instanceof HTMLLinkElement) {
-                setState(StateKeys.ACTIVE_TAB, target.href.split('#')[1]);
-                updateURL();
-            }
-        });
-    });
-
-    // Bootstrap tab shown event for map resize
-    document.querySelectorAll('a[data-toggle="tab"]').forEach(tabElement => {
+    // Bootstrap 5 tab shown event - let Bootstrap handle the tab switching
+    document.querySelectorAll('a[data-bs-toggle="tab"]').forEach(tabElement => {
+        // Listen for Bootstrap's tab shown event instead of click
         tabElement.addEventListener('shown.bs.tab', (e) => {
             const target = e.target;
             if (target instanceof HTMLLinkElement) {
+                // Update our internal state when tab is shown
                 const href = target.getAttribute('href');
-                if (href === '#themap') {
-                    getMap().updateSize();
+                if (href) {
+                    const tabId = href.substring(1); // Remove the # symbol
+                    setState(StateKeys.ACTIVE_TAB, tabId);
+                    updateURL();
+                    
+                    // Handle map resize for the map tab
+                    if (href === '#themap') {
+                        getMap().updateSize();
+                    }
                 }
             }
         });

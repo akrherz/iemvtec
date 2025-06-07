@@ -1,7 +1,7 @@
 /**
  * Data loading utilities for populating tables with VTEC-related data
  */
-import { getLSRTable } from './tableUtils.js';
+import { getLSRTable, getSBWLSRTable, getEventTable } from './tableUtils.js';
 import { fetchWithParams, getData } from './appUtils.js';
 import { createTabHTML, createTabPaneHTML } from './tabUtils.js';
 import { requireElement, requireSelectElement, escapeHTML } from './domUtils.js';
@@ -10,6 +10,7 @@ import { loadVTECGeometry } from './geometryLoader.js';
 import { getSignificance, getETN, getWFO, getYear, getPhenomena } from './vtecFields.js';
 import moment from 'moment';
 import { setLoadedVTEC, vtecString } from './urlUtils.js';
+import { getUGCTable } from './ugcTable.js';
 
 /**
  * Make web services calls to get VTEC data and load the tabs with information
@@ -32,10 +33,10 @@ export function loadTabs() {
             Number ${getETN()}`;
     
     // Load VTEC event data and populate tabs
-    loadVTECEventData(ugcTable, getLSRTable(), sbwLsrTable);
+    loadVTECEventData(getUGCTable(), getLSRTable(), getSBWLSRTable());
     
     // Load VTEC events table data
-    loadVTECEventsData(eventTable);
+    loadVTECEventsData(getEventTable());
     
     // Set the active tab to 'Event Info' if we are on the first tab
     const firstTab = document.querySelector('#thetabs_tabs a');
@@ -54,7 +55,7 @@ export function loadTabs() {
  * @param {any} sbwLsrTable - DataTable instance for SBW LSR data
  */
 export function loadVTECEventData(ugcTable, lsrTable, sbwLsrTable) {
-    fetchWithParams('/json/vtec_event.py', getData())
+    fetchWithParams('https://mesonet.agron.iastate.edu/json/vtec_event.py', getData())
         .then((data) => {
             if (!data.event_exists) {
                 requireElement('info_event_found').style.display = 'none';
@@ -125,7 +126,7 @@ export function loadVTECEventData(ugcTable, lsrTable, sbwLsrTable) {
  * @param {any} eventTable - DataTable instance for events data
  */
 export function loadVTECEventsData(eventTable) {
-    fetchWithParams('/json/vtec_events.py', getData())
+    fetchWithParams('https://mesonet.agron.iastate.edu/json/vtec_events.py', getData())
         .then((data) => {
             eventTable.clear();
             data.events.forEach((_idx, vtec) => {

@@ -21,7 +21,18 @@ export function initEventTable() {
 
      const eventTableElement = document.getElementById('eventtable');
     if (eventTableElement) {
-        eventTable = new DataTable(eventTableElement);
+        eventTable = new DataTable(eventTableElement, {
+            columns: [
+                { data: 0 }, // ID
+                { data: 1 }, // Product Issued
+                { data: 2 }, // VTEC Issued
+                { data: 3 }, // Initial Expire
+                { data: 4 }, // VTEC Expire
+                { data: 5 }, // Area km**2
+                { data: 6 }, // Locations
+                { data: 7 }  // Signature
+            ]
+        });
     }
 }
 

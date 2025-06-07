@@ -8,7 +8,7 @@ import { requireInputElement, requireSelectElement, escapeHTML } from './domUtil
  * @returns {string} The escaped significance value
  */
 export function getSignificance() {
-    const significanceElement = requireInputElement('significance');
+    const significanceElement = requireSelectElement('significance');
     return escapeHTML(significanceElement ? significanceElement.value : '');
 }
 
@@ -17,7 +17,7 @@ export function getSignificance() {
  * @param {string} significance - The significance value to set
  */
 export function setSignificance(significance) {
-    const significanceElement = requireInputElement('significance');
+    const significanceElement = requireSelectElement('significance');
     significanceElement.value = escapeHTML(significance);
 }
 
@@ -46,7 +46,7 @@ export function setETN(etn) {
  * @returns {string} The escaped WFO value
  */
 export function getWFO() {
-    return escapeHTML(requireInputElement('wfo').value);
+    return escapeHTML(requireSelectElement('wfo').value);
 }
 
 /**
@@ -54,7 +54,7 @@ export function getWFO() {
  * @param {string} wfo - The WFO value to set
  */
 export function setWFO(wfo) {
-    requireInputElement('wfo').value = escapeHTML(wfo);
+    requireSelectElement('wfo').value = escapeHTML(wfo);
 }
 
 /**
