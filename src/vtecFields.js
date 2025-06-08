@@ -1,7 +1,7 @@
 /**
  * VTEC form field getter and setter utilities
  */
-import { requireInputElement, requireSelectElement, escapeHTML } from './domUtils.js';
+import { requireInputElement, requireSelectElement, escapeHTML } from 'iemjs/domUtils';
 
 /**
  * Get the significance value from the form

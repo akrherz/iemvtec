@@ -3,7 +3,7 @@
  * Centralizes all UI event listener configuration
  */
 
-import { requireElement, requireSelectElement, escapeHTML } from './domUtils.js';
+import { requireElement, requireSelectElement, escapeHTML } from 'iemjs/domUtils';
 import { setState, StateKeys } from './state.js';
 import { getETN, setETN } from './vtecFields.js';
 import { updateURL, urlencode } from './urlUtils.js';

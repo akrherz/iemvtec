@@ -5,7 +5,7 @@ import { Overlay, Map, View } from 'ol';
 import { transform } from 'ol/proj';
 import { GeoJSON } from 'ol/format';
 import { VanillaSlider } from './vanillaSlider.js';
-import { requireInputElement, escapeHTML } from './domUtils.js';
+import { requireInputElement, escapeHTML } from 'iemjs/domUtils';
 import { setState, getState, StateKeys } from './state.js';
 import { populateSelectFromObjects } from './selectUtils.js';
 import moment from 'moment';

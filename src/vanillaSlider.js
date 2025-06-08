@@ -1,5 +1,5 @@
 // Vanilla JavaScript slider component to replace jQuery UI sliders
-import { getElement } from './domUtils.js';
+import { getElement } from 'iemjs/domUtils';
 
 export class VanillaSlider {
     constructor(elementId, options = {}) {

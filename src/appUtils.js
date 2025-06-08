@@ -4,7 +4,7 @@
 
 import { Vector as VectorSource } from 'ol/source';
 import { GeoJSON } from 'ol/format';
-import { requireElement } from './domUtils.js';
+import { requireElement } from 'iemjs/domUtils';
 import { getWFO, getPhenomena, getSignificance, getETN, getYear } from './vtecFields.js';
 import { setState, StateKeys } from './state.js';
 import { updateURL } from './urlUtils.js';

@@ -3,8 +3,8 @@
  * Handles populating form controls with initial data and values
  */
 
-import { requireSelectElement } from './domUtils.js';
-import { iemdata } from './iemdata.js';
+import { requireSelectElement } from 'iemjs/domUtils';
+import { vtec_phenomena, wfos, vtec_significance } from 'iemjs/iemdata';
 import { setETN } from './vtecFields.js';
 import { buildSelectOptions, populateSelect } from './selectUtils.js';
 
@@ -13,7 +13,7 @@ import { buildSelectOptions, populateSelect } from './selectUtils.js';
  */
 export function initializeWFOSelect() {
     const wfoSelect = requireSelectElement('wfo');
-    const options = buildSelectOptions(iemdata.wfos, '<option value="{value}">[{value}] {text}</option>');
+    const options = buildSelectOptions(wfos, '<option value="{value}">[{value}] {text}</option>');
     wfoSelect.innerHTML += options;
     wfoSelect.value = 'KDMX';
 }
@@ -22,14 +22,14 @@ export function initializeWFOSelect() {
  * Initialize the phenomena select element
  */
 export function initializePhenomenaSelect() {
-    populateSelect('phenomena', iemdata.vtec_phenomena_dict, 'TO', '<option value="{value}">{text} ({value})</option>');
+    populateSelect('phenomena', vtec_phenomena, 'TO', '<option value="{value}">{text} ({value})</option>');
 }
 
 /**
  * Initialize the significance select element
  */
 export function initializeSignificanceSelect() {
-    populateSelect('significance', iemdata.vtec_sig_dict, 'W', '<option value="{value}">{text} ({value})</option>');
+    populateSelect('significance', vtec_significance, 'W', '<option value="{value}">{text} ({value})</option>');
 }
 
 /**
