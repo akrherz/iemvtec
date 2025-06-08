@@ -4,7 +4,7 @@
 import { setState, getState, StateKeys } from './state.js';
 import { setYear, setWFO, setPhenomena, setSignificance, setETN, 
          getYear, getWFO, getPhenomena, getSignificance, getETN } from './vtecFields.js';
-import { escapeHTML } from './domUtils.js';
+import { escapeHTML } from 'iemjs/domUtils';
 import moment from 'moment';
 
 // Track the last loaded VTEC to detect changes

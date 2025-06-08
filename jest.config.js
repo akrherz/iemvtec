@@ -12,6 +12,7 @@ module.exports = {
     '^earcut$': '<rootDir>/tests/__mocks__/earcut.js'
   },
   transformIgnorePatterns: [
-    'node_modules/'
+    'node_modules/(?!(ol|color-space|@shoelace-style|@lit|lit|lit-html|lit-element|iemjs)/).*'
   ]
+
 };

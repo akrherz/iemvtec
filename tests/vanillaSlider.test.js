@@ -5,7 +5,7 @@
 import { jest, describe, test, expect, beforeEach, afterEach } from '@jest/globals';
 
 // Mock domUtils before importing VanillaSlider
-jest.mock('../src/domUtils.js', () => ({
+jest.mock('iemjs/domUtils', () => ({
     getElement: jest.fn()
 }));
 
@@ -20,7 +20,7 @@ describe('VanillaSlider', () => {
         document.body.innerHTML = '<div id="test-slider"></div>';
         
         mockContainer = document.getElementById('test-slider');
-        mockGetElement = require('../src/domUtils.js').getElement;
+        mockGetElement = require('iemjs/domUtils').getElement;
         mockGetElement.mockReturnValue(mockContainer);
 
         global.getComputedStyle = jest.fn(() => ({

@@ -4,7 +4,7 @@
 import { getLSRTable, getSBWLSRTable, getEventTable } from './tableUtils.js';
 import { fetchWithParams, getData } from './appUtils.js';
 import { createTabHTML, createTabPaneHTML } from './tabUtils.js';
-import { requireElement, requireSelectElement, escapeHTML } from './domUtils.js';
+import { requireElement, requireSelectElement, escapeHTML } from 'iemjs/domUtils';
 import { setState, getState, StateKeys } from './state.js';
 import { loadVTECGeometry } from './geometryLoader.js';
 import { getSignificance, getETN, getWFO, getYear, getPhenomena } from './vtecFields.js';
