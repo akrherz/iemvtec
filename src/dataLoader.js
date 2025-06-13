@@ -157,7 +157,7 @@ export function setupImageDisplays() {
     ).padStart(4, '0')}`;
     
     requireElement('radarmap').innerHTML = 
-        `<img src="/GIS/radmap.php?layers[]=nexrad&layers[]=sbw&layers[]=sbwh&layers[]=uscounties&vtec=${vstring}" class="img img-responsive">`;
+        `<img src="https://mesonet.agron.iastate.edu/GIS/radmap.php?layers[]=nexrad&layers[]=sbw&layers[]=sbwh&layers[]=uscounties&vtec=${vstring}" class="img-fluid">`;
     requireElement('sbwhistory').innerHTML = 
-        `<img src="/GIS/sbw-history.php?vtec=${vstring}" class="img img-responsive">`;
+        `<img src="https://mesonet.agron.iastate.edu/GIS/sbw-history.php?vtec=${vstring}" class="img-fluid">`;
 }

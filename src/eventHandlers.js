@@ -8,6 +8,7 @@ import { setState, StateKeys, subscribeToState } from './state.js';
 import { getETN, setETN } from './vtecFields.js';
 import { updateURL, urlencode } from './urlUtils.js';
 import { updateRADARProducts, updateRADARTimeSlider } from './mapManager.js';
+import { loadTabs } from './dataLoader.js';
 
 /**
  * Create state subscribers for the application
@@ -35,7 +36,7 @@ function createStateSubscribers() {
 function createButtonHandler(action) {
     return function() {
         action();
-        updateURL();
+        loadTabs();
         /** @type {HTMLElement} */ (this).blur();
     };
 }

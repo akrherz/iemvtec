@@ -10,7 +10,6 @@ import { initLSRTables, initEventTable, getEventTable } from './tableUtils.js';
 import { handleURLChange, consumeInitialURL } from './urlUtils.js';
 import { setupEventHandlers } from './eventHandlers.js';
 import { initializeForm } from './formInit.js';
-import { loadTabs } from './dataLoader.js';
 import { makeUGCTable } from './ugcTable.js';
 import { initializeUI } from './uiManager.js';
 
@@ -76,13 +75,13 @@ async function initializeApp() {
     // Step 2, build the map
     buildMap();
     // Step 3, consume the URL to resolve the data to load
-    consumeInitialURL(loadTabs);
+    consumeInitialURL();
 
     /**
      * Listen for user hitting the back and forward buttons
      */
     window.addEventListener('popstate', () => {
-        handleURLChange(document.location.pathname, loadTabs);
+        handleURLChange(document.location.pathname);
     });
 
     initMap();
