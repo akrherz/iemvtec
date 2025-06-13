@@ -36,6 +36,15 @@ const wfoLookup = {
     KHFO: 'PHFO',
     KJSJ: 'TJSJ',
 };
+const wfo3to4 = {
+    GUM: 'PGUM', // Guam
+    HFO: 'PHFO', // Hawaii
+    SJU: 'TJSJ', // San Juan
+    AFC: 'PAFC', // Alaska Fairbanks
+    AJK: 'PAJK', // Alaska Juneau
+    AFG: 'PAFG', // Alaska Fairbanks
+    ANC: 'PANC', // Alaska Anchorage
+};
 
 /**
  * Generate a commonly used VTEC string in the form of
@@ -137,7 +146,11 @@ function setActiveTab(tab) {
  */
 function handleQueryParams(params) {
     const year = params.get('year');
-    const wfo = params.get('wfo');
+    let wfo = params.get('wfo');
+    // Rectify wfo to 4 character format
+    if (wfo && wfo.length === 3) {
+        wfo = wfo3to4[wfo] || `K${wfo}`;
+    }
     const phenomena = params.get('phenomena');
     const significance = params.get('significance');
     const eventid = params.get('eventid');
@@ -249,13 +262,7 @@ export function consumeInitialURL() {
         handleURLChange(window.location.href);
         return;
     }
-    
-    // Check for RESTish URLs (legacy format)
-    if (window.location.pathname.startsWith('/event')) {
-        handleURLChange(window.location.pathname);
-        return;
-    }
-    
+
     // Handle hash links (oldest legacy format)
     const tokens = window.location.href.split('#');
     if (tokens.length === 1) {
