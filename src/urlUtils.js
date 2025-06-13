@@ -59,11 +59,12 @@ export function urlencode() {
  * Important gateway for updating the app
  * fires off a navigateTo call, which may or may not reload the data
  * depending on the VTEC string
+ * @param {boolean} [propogate=true] - Whether to call navigateTo
  * @returns {void}
  */
-export function updateURL() {
+export function updateURL(propogate = true) {
     const params = new URLSearchParams();
-    params.set('year', getYear());
+    params.set('year', `${getYear()}`);
     params.set('wfo', getWFO());
     params.set('phenomena', getPhenomena());
     params.set('significance', getSignificance());
@@ -90,17 +91,10 @@ export function updateURL() {
     
     const url = `?${params.toString()}`;
     document.title = `VTEC Event ${vtecString()}`;
-    navigateTo(url);
-}
-
-/**
- * Push the URL onto the HTML5 history stack
- * and call handleURLChange, which may or may not reload the data
- * @param {String} url
- */
-export function navigateTo(url) {
     history.pushState(null, '', url);
-    handleURLChange(url);
+    if (propogate) {
+        handleURLChange(url);
+    }
 }
 
 /**
@@ -244,9 +238,6 @@ export function handleURLChange(url, loadTabsCallback) {
     if (loadTabsCallback && loadedVTEC !== vtecString()) {
         loadTabsCallback();
     }
-    
-    // Migrate legacy URL to new format
-    updateURL();
 }
 
 /**
@@ -304,5 +295,5 @@ export function consumeInitialURL(loadTabsCallback) {
     params.set('tab', 'info');
     
     const migratedUrl = `?${params.toString()}`;
-    navigateTo(migratedUrl);
+    handleURLChange(migratedUrl);
 }

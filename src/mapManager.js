@@ -4,10 +4,10 @@ import { Vector as VectorSource, OSM, XYZ } from 'ol/source';
 import { Overlay, Map, View } from 'ol';
 import { transform } from 'ol/proj';
 import { GeoJSON } from 'ol/format';
-import { VanillaSlider } from './vanillaSlider.js';
 import { requireSelectElement, escapeHTML } from 'iemjs/domUtils';
 import { setState, getState, StateKeys } from './state.js';
 import { populateSelectFromObjects } from './selectUtils.js';
+import { updateTimeSlider } from './uiManager.js';
 import moment from 'moment';
 
 let olmap = null;
@@ -144,12 +144,18 @@ export function getRadarTimes() {
     return radartimes;
 }
 
-export function getRADARSource() {
-    const dt = radartimes[VanillaSlider.getValue('timeslider')];
-    if (dt === undefined) {
-        return new XYZ({
-            url: 'https://mesonet.agron.iastate.edu/cache/tile.py/1.0.0/ridge::USCOMP-N0Q-0/{z}/{x}/{y}.png',
-        });
+/**
+ * Get the RADAR source for a specific time index
+ * @param {number} timeIndex 
+ * @returns {XYZ}
+ */
+export function getRADARSource(timeIndex = 0) {
+    const radartimes = getRadarTimes();
+    const dt = radartimes[timeIndex];
+    if (!radartimes || !dt) {
+        console.error(`FIXME: time: ${timeIndex} with radartimes:`, radartimes);
+        const url = 'https://mesonet.agron.iastate.edu/cache/tile.py/1.0.0/ridge::USCOMP-N0Q-0/{z}/{x}/{y}.png';
+        return new XYZ({url});
     }
     radarTMSLayer.set('title', `@ ${dt.format()}`);
     const radarSourceElement = requireSelectElement('radarsource');
@@ -159,9 +165,18 @@ export function getRADARSource() {
     const url = `https://mesonet.agron.iastate.edu/cache/tile.py/1.0.0/ridge::${src}-${prod}-${dt
         .utc()
         .format('YMMDDHHmm')}/{z}/{x}/{y}.png`;
-    return new XYZ({
-        url,
-    });
+    return new XYZ({url});
+}
+
+/**
+ * Updates the RADAR TMS source and UI elements relevant.
+ * @param {number} timeIndex 
+ */
+export function updateRadarDisplay(timeIndex)  {
+    const layer = getRadarTMSLayer();
+    layer.setSource(getRADARSource(timeIndex));
+    //setState(StateKeys.RADAR_PRODUCT_TIME, dt);
+    //updateTimeLabel(dt);
 }
 
 function make_iem_tms(title, layername, visible, type) {
@@ -275,7 +290,7 @@ function lsrFeatureHTML(feature) {
  * Query radar service for available RADARs and products
  * and update the UI
  */
-function updateRADARTimeSlider() {
+export function updateRADARTimeSlider() {
     const requestData = {
         radar: requireSelectElement('radarsource').value,
         product: requireSelectElement('radarproduct').value,
@@ -301,13 +316,13 @@ function updateRADARTimeSlider() {
                 setState(StateKeys.RADAR_PRODUCT_TIME, radartimes[0]);
             }
             let idx = 0;
+            const radarProductTime = getState(StateKeys.RADAR_PRODUCT_TIME);
             radartimes.forEach((rt, i) => {
-                if (rt.isSame(getState(StateKeys.RADAR_PRODUCT_TIME))) {
+                if (rt.isSame(radarProductTime)) {
                     idx = i;
                 }
             });
-            VanillaSlider.setOption('timeslider', 'max', radartimes.length - 1);
-            VanillaSlider.setValue('timeslider', idx);
+            updateTimeSlider(radartimes.length - 1, idx);
         });
 }
 
