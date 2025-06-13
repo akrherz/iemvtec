@@ -148,7 +148,7 @@ export function getRADARSource() {
     const dt = radartimes[VanillaSlider.getValue('timeslider')];
     if (dt === undefined) {
         return new XYZ({
-            url: '/cache/tile.py/1.0.0/ridge::USCOMP-N0Q-0/{z}/{x}/{y}.png',
+            url: 'https://mesonet.agron.iastate.edu/cache/tile.py/1.0.0/ridge::USCOMP-N0Q-0/{z}/{x}/{y}.png',
         });
     }
     radarTMSLayer.set('title', `@ ${dt.format()}`);
@@ -156,7 +156,7 @@ export function getRADARSource() {
     const radarProductElement = requireInputElement('radarproduct');
     const src = escapeHTML(radarSourceElement ? radarSourceElement.value : '');
     const prod = escapeHTML(radarProductElement ? radarProductElement.value : '');
-    const url = `/cache/tile.py/1.0.0/ridge::${src}-${prod}-${dt
+    const url = `https://mesonet.agron.iastate.edu/cache/tile.py/1.0.0/ridge::${src}-${prod}-${dt
         .utc()
         .format('YMMDDHHmm')}/{z}/{x}/{y}.png`;
     return new XYZ({
@@ -171,7 +171,7 @@ function make_iem_tms(title, layername, visible, type) {
         visible,
         type,
         source: new XYZ({
-            url: `/c/tile.py/1.0.0/${layername}/{z}/{x}/{y}.png`,
+            url: `https://mesonet.agron.iastate.edu/c/tile.py/1.0.0/${layername}/{z}/{x}/{y}.png`,
         }),
     });
 }
@@ -328,7 +328,7 @@ export function updateRADARProducts() {
         operation: 'products',
     };
     
-    fetch('/json/radar.py?' + new URLSearchParams(requestData))
+    fetch('https://mesonet.agron.iastate.edu/json/radar.py?' + new URLSearchParams(requestData))
         .then(response => response.json())
         .then(data => {
             populateSelectFromObjects('radarproduct', data.products, undefined, 'id', 'name');

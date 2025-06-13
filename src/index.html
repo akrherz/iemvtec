@@ -1,26 +1,315 @@
 <!--
-  This file is just a placeholder for development.
-  In production, a template is used with the <main> content
-  loaded from _index_content.html.
+  This HTML document is intended to replicate what happens in production
+  after all the templating runs.  I just downloaded
+  https://iem.local/info/contacts.php and removes stuff that this app generates
 -->
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
+  <head>
+        <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NWS Valid Time Event Code (VTEC) Browser</title>
-</head>
-<body>
-    <div id="app">
-        <!-- This will be loaded from your existing _index_content.html in production -->
-        <div id="vtec-content">
-            <!-- Development placeholder - in production this comes from Python -->
-            <h1>VTEC Browser - Development Mode</h1>
-            <p>Loading content...</p>
+    <title>IEM :: Contacts</title>
+    <meta name="description" content="Iowa State University, Iowa Environmental Mesonet">
+    <meta name="author" content="daryl herzmann akrherz@iastate.edu">
+
+    <!-- TODO: improve this for dev -->
+    <link href="https://iem.local/css/iastate-iem.css" rel="stylesheet">
+
+    <!-- Any page specific headextra content here -->
+    
+    <!-- Essential Social Tags -->
+    <meta property="og:title" content="IEM :: Contacts">
+    <meta property="og:description" content="Iowa Environmental Mesonet of Iowa State University">
+    <meta property="og:image" content="https://mesonet.agron.iastate.edu/images/logo_large.png">
+    <meta property="og:url" content="https://mesonet.agron.iastate.edu/info/contacts.php">
+        <meta name="twitter:card" content="summary">
+
+    <!-- Non-essential -->
+    <meta name="twitter:creator" content="@akrherz">
+    <!-- Le fav and touch icons -->
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="/apple-touch-icon-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="/apple-touch-icon-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" href="/apple-touch-icon-precomposed.png">
+  </head>
+
+  <body>
+<header>
+<!-- Mobile navbar: Simple single row with logo, search, and hamburger -->
+<nav class="navbar-site d-block d-lg-none">
+	<div class="container">
+		<div class="mobile-navbar-row">
+			<div class="mobile-logo">
+				<a href="/" title="Home">
+					<img src="/images/logo_small.png" alt="IEM" height="30">
+				</a>
+			</div>
+			
+			<div class="mobile-search">
+				<form action="/search" method="GET" role="search">
+					<input name="q" aria-label="Search" title="Search" placeholder="Search 'DSM' 'autoplot 100' 'street address'" type="text" class="form-control form-control-sm">
+				</form>
+			</div>
+			
+			<div class="mobile-menu">
+				<button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar-menu-collapse, #mobile-site-links" aria-expanded="false">
+					<span class="navbar-toggler-icon"></span>
+				</button>
+			</div>
+		</div>
+		
+		<!-- Mobile site links (contact, disclaimer, apps) -->
+		<div class="collapse" id="mobile-site-links">
+			<ul class="nav navbar-nav mobile-site-nav">
+				<li class="nav-item"><a class="nav-link" href="/info/contacts.php">contact us</a></li>
+				<li class="nav-item"><a class="nav-link" href="/disclaimer.php">disclaimer</a></li>
+				<li class="nav-item"><a class="nav-link" href="/apps.php">apps</a></li>
+			</ul>
+		</div>
+	</div>
+</nav>
+
+<!-- Desktop navbar: ISU wordmark on left, search and links stacked on right -->
+<nav class="navbar-site d-none d-lg-block">
+	<div class="container">
+		<div class="desktop-navbar-row">
+			<div class="desktop-wordmark">
+				<a href="/" title="Home" class="wordmark-unit">
+					<span class="wordmark-isu">Iowa State University</span>
+					<span class="wordmark-unit-title">Iowa Environmental Mesonet</span>
+				</a>
+			</div>
+			
+			<div class="desktop-right">
+				<div class="desktop-search">
+					<form action="/search" method="GET" role="search">
+						<input name="q" aria-label="Search" title="Search" placeholder="Search 'DSM' 'autoplot 100' 'street address'" type="text" class="form-control">
+					</form>
+				</div>
+				
+				<div class="desktop-links">
+					<ul class="nav navbar-nav">
+						<li class="nav-item"><a class="nav-link" href="/info/contacts.php">contact us</a></li>
+						<li class="nav-item"><a class="nav-link" href="/disclaimer.php">disclaimer</a></li>
+						<li class="nav-item"><a class="nav-link" href="/apps.php">apps</a></li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+</nav>
+</header>
+
+<!-- Main navigation menu navbar -->
+<nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom">
+    <div class="container">
+        <!-- Desktop IEM logo (visible in main nav on desktop) -->
+        <div class="d-none d-lg-block">
+            <a href="/"><img style="height: 50px;" alt="IEM" class="img-fluid float-start" src="/images/logo_small.png" /></a>
+        </div>
+        
+        <!-- Main navigation menu (collapsible on mobile) -->
+        <div class="navbar-collapse collapse" id="navbar-menu-collapse">
+            <ul class="nav navbar-nav">
+        
+<li class="nav-item dropdown"><a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" 
+	href="#"> <i class="bi bi-house-fill"></i> </a>
+	<ul class="dropdown-menu">
+        <li><a class="dropdown-item" href="/projects/iao/">Iowa Atmospheric Observatory</a></li>
+		<li><a class="dropdown-item" href="/">Iowa Environmental Mesonet</a></li>
+		<li><a class="dropdown-item" href="https://cocorahs.org">CoCoRaHS</a></li>
+		<li><a class="dropdown-item" href="https://dailyerosion.org">Daily Erosion Project</a></li>
+		<li><a class="dropdown-item" href="https://weather.im">Weather.IM Project</a></li>
+	</ul></li>
+        
+<li class="nav-item dropdown">
+<a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#">Apps</a>
+<ul class="dropdown-menu">
+<li><a class="dropdown-item" href="/apps.php">Application Index</a></li>
+<li><a class="dropdown-item" href="/plotting/auto/">Automated Data Plotting</a></li>
+<li><a class="dropdown-item" href="/climodat/">Climodat</a></li>
+<li><a class="dropdown-item" href="/climodat/monitor.php">Climodat Monitor</a></li>
+<li><a class="dropdown-item" href="/explorer/">IEM Explorer</a></li>
+<li><a class="dropdown-item" href="/rainfall/obhour.phtml">Hourly Precip</a></li>
+<li><a class="dropdown-item" href="/GIS/apps/rview/warnings.phtml">Interactive Radar</a></li>
+<li><a class="dropdown-item" href="/topics/pests/">Pest Maps + Forecasting</a></li>
+<li><a class="dropdown-item" href="/my/current.phtml">Sortable Currents</a></li>
+<li><a class="dropdown-item" href="/timemachine/">Time Machine</a></li>
+<li><a class="dropdown-item" href="/sites/windrose.phtml?station=AMW&network=IA_ASOS">Wind Roses</a></li>
+</ul>
+</li>
+<li class="nav-item dropdown">
+<a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#">Areas</a>
+<ul class="dropdown-menu">
+<li><a class="dropdown-item" href="/agweather/">Ag Weather/Climate Info</a></li>
+<li><a class="dropdown-item" href="/archive/">Archive Mainpage</a></li>
+<li><a class="dropdown-item" href="/climate/">Climate Mainpage</a></li>
+<li><a class="dropdown-item" href="/current/">Current Mainpage</a></li>
+<li><a class="dropdown-item" href="/dm/">Drought</a></li>
+<li><a class="dropdown-item" href="/GIS/">GIS Mainpage</a></li>
+<li><a class="dropdown-item" href="/nws/">NWS Mainpage</a></li>
+<li><a class="dropdown-item" href="/current/severe.phtml">Severe Weather Mainpage</a></li>
+</ul>
+</li>
+<li class="nav-item dropdown">
+<a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#">Datasets</a>
+<ul class="dropdown-menu">
+<li><a class="dropdown-item" href="/COOP/extremes.php">Daily Climatology</a></li>
+<li><a class="dropdown-item" href="/request/daily.phtml">Daily Observations</a></li>
+<li><a class="dropdown-item" href="/info/datasets/">Dataset Documentation</a></li>
+<li><a class="dropdown-item" href="/iemre/">IEM Reanalysis</a></li>
+<li><a class="dropdown-item" href="/mos/">Model Output Statistics</a></li>
+<li><a class="dropdown-item" href="/docs/nexrad_mosaic/">NEXRAD Mosaic</a></li>
+<li><a class="dropdown-item" href="/request/gis/pireps.php">PIREP - Pilot Reports</a></li>
+<li><a class="dropdown-item" href="/roads/">Roads Mainpage</a></li>
+<li><a class="dropdown-item" href="/current/radar.phtml">RADAR & Satellite</a></li>
+<li><a class="dropdown-item" href="/rainfall/">Rainfall Data</a></li>
+<li><a class="dropdown-item" href="/archive/raob/">Sounding Archive</a></li>
+<li><a class="dropdown-item" href="/smos/">Soil Moisture Satellite</a></li>
+</ul>
+</li>
+<li class="nav-item dropdown">
+<a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#">Info</a>
+<ul class="dropdown-menu">
+<li><a class="dropdown-item" href="/info.php">Info Mainpage</a></li>
+<li><a class="dropdown-item" href="/onsite/features/past.php">Daily Features</a></li>
+<li><a class="dropdown-item" href="/info/links.php">Links</a></li>
+<li><a class="dropdown-item" href="/onsite/news.phtml">News</a></li>
+<li><a class="dropdown-item" href="/present/">Presentations</a></li>
+<li><a class="dropdown-item" href="/info/refs.php">Referenced By</a></li>
+<li><a class="dropdown-item" href="/sites/locate.php">Station Data and Metadata</a></li>
+<li><a class="dropdown-item" href="/QC/">Quality Control</a></li>
+<li><a class="dropdown-item" href="/info/variables.phtml">Variables</a></li>
+</ul>
+</li>
+<li class="nav-item dropdown">
+<a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#">Networks</a>
+<ul class="dropdown-menu">
+<li><a class="dropdown-item" href="/sites/networks.php">Network Tables</a></li>
+<li><a class="dropdown-item" href="/ASOS/">ASOS/AWOS Airports</a></li>
+<li><a class="dropdown-item" href="/cocorahs/">CoCoRaHS - Citizen Science</a></li>
+<li><a class="dropdown-item" href="/DCP/">DCP/HADS/SHEF - Hydrological</a></li>
+<li><a class="dropdown-item" href="/COOP/">NWS COOP - Daily Climate</a></li>
+<li><a class="dropdown-item" href="/agclimate/">ISU Soil Moisture</a></li>
+<li><a class="dropdown-item" href="/nstl_flux/">NLAE Flux</a></li>
+<li><a class="dropdown-item" href="/RWIS/">RWIS - Roadway Weather</a></li>
+<li><a class="dropdown-item" href="/scan/">SCAN - NRCS Soil Climate</a></li>
+<li><a class="dropdown-item" href="/other/">Other</a></li>
+<li><a class="dropdown-item" href="/uscrn/">US Climate Reference</a></li>
+</ul>
+</li>
+<li class="nav-item dropdown">
+<a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#">NWS Data</a>
+<ul class="dropdown-menu">
+<li><a class="dropdown-item" href="/nws/">NWS Mainpage</a></li>
+<li><a class="dropdown-item" href="/lsr/">Local Storm Report App</a></li>
+<li><a class="dropdown-item" href="/cow/">IEM Cow (SBW Verification)</a></li>
+<li><a class="dropdown-item" href="/raccoon/">IEM Raccoon (SBW Powerpoints)</a></li>
+<li><a class="dropdown-item" href="/river/">River Summary</a></li>
+<li><a class="dropdown-item" href="/GIS/goes.phtml">Satellite Data</a></li>
+<li><a class="dropdown-item" href="/vtec/search.php">Search for Warnings</a></li>
+<li><a class="dropdown-item" href="/nws/sps_search/">Special Weather Statement (SPS) Search</a></li>
+<li><a class="dropdown-item" href="/nws/spc_outlook_search/">SPC Convective Outlook / MCD Search</a></li>
+<li><a class="dropdown-item" href="/GIS/apps/rview/watch.phtml">SPC Watches</a></li>
+<li><a class="dropdown-item" href="/nws/text.php">Text Archives Mainpage</a></li>
+<li><a class="dropdown-item" href="/wx/afos/list.phtml">Text Listing by WFO/Center/Product</a></li>
+<li><a class="dropdown-item" href="/wx/afos/">Text by Product ID</a></li>
+<li><a class="dropdown-item" href="/vtec/">VTEC Browser</a></li>
+</ul>
+</li>
+<li class="nav-item dropdown">
+<a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#">Services</a>
+<ul class="dropdown-menu">
+<li><a class="dropdown-item" href="/api/">API Mainpage</a></li>
+<li><a class="dropdown-item" href="/api/#cgi">CGI / Bulk Data</a></li>
+<li><a class="dropdown-item" href="/request/grx/">Gibson Ridge Placefiles</a></li>
+<li><a class="dropdown-item" href="/projects/iembot/">iembot</a></li>
+<li><a class="dropdown-item" href="/api/#json">JSON Webservices</a></li>
+<li><a class="dropdown-item" href="/request/ldm.php">LDM</a></li>
+<li><a class="dropdown-item" href="/request/maxcsv.py?help">Max CSV</a></li>
+<li><a class="dropdown-item" href="/ogc/">OGC Webservices</a></li>
+<li><a class="dropdown-item" href="/GIS/radmap_api.phtml">RadMap API</a></li>
+<li><a class="dropdown-item" href="/GIS/radview.phtml">RADAR Services</a></li>
+</ul>
+</li>
+<li class="nav-item dropdown">
+<a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#">Webcams</a>
+<ul class="dropdown-menu">
+<li><a class="dropdown-item" href="/projects/webcam.php">Webcam mainpage</a></li>
+<li><a class="dropdown-item" href="/current/bloop.phtml">Build your own lapses</a></li>
+<li><a class="dropdown-item" href="/cool/">Cool lapses</a></li>
+<li><a class="dropdown-item" href="/current/viewer.phtml">IEM Webcam Viewer</a></li>
+<li><a class="dropdown-item" href="/current/isucams.phtml">ISU Campus Webcams</a></li>
+<li><a class="dropdown-item" href="/current/camlapse/">Recent lapses</a></li>
+<li><a class="dropdown-item" href="/current/webcam.php">Still images</a></li>
+</ul>
+</li>
+</ul>
         </div>
     </div>
-    
-    <!-- Load the main app -->
+</nav><main role="main" id="main-content">
+<div class="container" id="vtec-content">
+
+<p>Lorem ipsum...</p>
+
+</div><!--/.container-->
+</main>
+<!-- footer -->
+<footer role="contentinfo">
+    <div class="container" id="iem-footer">
+        <div class="row">
+
+            <!-- footer-associates -->
+            <section class="footer-associates col-sm-12 col-md-3">
+                <ul>
+                    <li><a href="https://iastate.edu"><img src="/vendor/img/isu-stacked.svg" class="wordmark-isu" alt="Iowa State University"></a></li>
+                    <li><a href="https://www.ag.iastate.edu">College of Ag</a></li>
+                    <li><a href="https://www.agron.iastate.edu">Department of Agronomy</a></li>
+                </ul>
+            </section>
+
+            <!-- footer-contact -->
+            <section class="footer-contact col-sm-12 col-md-3">
+                <p>
+                    <strong>Department of Agronomy</strong><br>
+                    <a href="https://maps.google.com/?q=716+Farm+House+Ln+Ames,+IA+50011">716 Farm House Ln<br>
+                    Ames, IA 50011</a>
+                </p>
+                <a href="mailto:akrherz@iastate.edu">akrherz@iastate.edu</a><br>
+            </section>	
+
+            <!-- footer-social -->
+            <section class="footer-social col-sm-12 col-md-3">
+                <ul class=" labeled">
+                <li><a href="https://www.facebook.com/IEM-157789644737/"><i class="bi bi-box-arrow-up-right" aria-hidden="true"></i> Facebook</a></li>
+                <li><a href="https://twitter.com/akrherz"><i class="bi bi-box-arrow-up-right" aria-hidden="true"></i> Twitter</a></li>
+                <li><a href="https://github.com/akrherz/iem"><i class="bi bi-box-arrow-up-right" aria-hidden="true"></i> Github</a></li>
+                <li><a href="https://youtube.com/akrherz"><i class="bi bi-box-arrow-up-right" aria-hidden="true"></i> YouTube</a></li>
+                <li><a href="/rss.php"><i class="bi bi-box-arrow-up-right" aria-hidden="true"></i> RSS</a></li>
+                </ul>
+            </section>	
+
+            <!-- footer-legal -->
+            <section class="footer-legal col-sm-12 col-md-3">
+                <p>Copyright &copy; 2001-2025<br>
+                                Iowa State University<br>
+                                of Science and Technology<br>
+                                All rights reserved.</p>
+                <ul>
+                    <li><a href="https://www.policy.iastate.edu/policy/discrimination">Non-discrimination Policy</a></li>
+                    <li><a href="https://www.policy.iastate.edu/electronicprivacy">Privacy Policy</a></li>
+                    <li><a href="https://digitalaccess.iastate.edu">Digital Access &amp; Accessibility</a></li>
+                </ul>
+            </section>
+
+        </div>
+    </div>
+</footer>
+<!-- /footer -->
     <script type="module" src="./app.js"></script>
-</body>
+
+      </body>
 </html>
+

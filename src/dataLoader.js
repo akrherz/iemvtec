@@ -69,7 +69,7 @@ export function loadVTECEventData(ugcTable, lsrTable, sbwLsrTable) {
             if (tabs && tabcontent) {
                 tabs.innerHTML = '';
                 tabcontent.innerHTML = '';
-                tabs.innerHTML = '<li><a href="#tall" data-toggle="tab">All</a></li>';
+                tabs.innerHTML = '<li class="nav-item"><a class="nav-link" href="#tall" data-bs-toggle="tab" data-bs-target="#tall">All</a></li>';
                 
                 const stamp = moment.utc(data.report.valid).local().format('DD/h:mm A');
                 const update = moment.utc(data.report.valid).format('YYYYMMDDHHmm');
@@ -100,16 +100,16 @@ export function loadVTECEventData(ugcTable, lsrTable, sbwLsrTable) {
                 }
             }
             ugcTable.clear();
-            data.ugcs.forEach((_idx, ugc) => {
-                ugcTable.row.add([
-                    ugc.ugc,
-                    ugc.name,
-                    ugc.status,
-                    ugc.utc_product_issue,
-                    ugc.utc_issue,
-                    ugc.utc_init_expire,
-                    ugc.utc_expire,
-                ]);
+            data.ugcs.forEach((ugc) => {
+                ugcTable.row.add({
+                    ugc: ugc.ugc,
+                    name: ugc.name,
+                    status: ugc.status,
+                    utc_product_issue: ugc.utc_product_issue,
+                    utc_issue: ugc.utc_issue,
+                    utc_init_expire: ugc.utc_init_expire,
+                    utc_expire: ugc.utc_expire
+                });
             });
             ugcTable.draw();
             setState(StateKeys.ISSUE, moment.utc(data.utc_issue));
@@ -129,17 +129,17 @@ export function loadVTECEventsData(eventTable) {
     fetchWithParams('https://mesonet.agron.iastate.edu/json/vtec_events.py', getData())
         .then((data) => {
             eventTable.clear();
-            data.events.forEach((_idx, vtec) => {
-                eventTable.row.add([
-                    vtec.eventid,
-                    vtec.product_issue,
-                    vtec.issue,
-                    vtec.init_expire,
-                    vtec.expire,
-                    vtec.area,
-                    vtec.locations,
-                    vtec.fcster,
-                ]);
+            data.events.forEach((vtec) => {
+                eventTable.row.add({
+                    id: vtec.eventid,
+                    product_issued: vtec.product_issue,
+                    vtec_issued: vtec.issue,
+                    initial_expire: vtec.init_expire,
+                    vtec_expire: vtec.expire,
+                    area_km2: vtec.area,
+                    locations: vtec.locations,
+                    signature: vtec.fcster
+                });
             });
             eventTable.draw();
         })

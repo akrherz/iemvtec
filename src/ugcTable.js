@@ -16,13 +16,13 @@ export function makeUGCTable(div) {
     if (ugcTableElement) {
         ugcTable = new DataTable(ugcTableElement, {
             columns: [
-                { data: 0 }, // UGC
-                { data: 1 }, // Name
-                { data: 2 }, // Status
-                { data: 3 }, // Issuance
-                { data: 4 }, // Issue
-                { data: 5 }, // Initial Expire
-                { data: 6 }  // Expire
+                { data: 'ugc' },
+                { data: 'name' },
+                { data: 'status' },
+                { data: 'utc_product_issue' },
+                { data: 'utc_issue' },
+                { data: 'utc_init_expire' },
+                { data: 'utc_expire' }
             ]
         });
     }

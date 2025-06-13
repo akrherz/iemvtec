@@ -208,10 +208,10 @@ export function setupEventTableHandler(eventTable) {
             }
             
             const data = eventTable.row(tr).data();
-            if (parseInt(data[0], 10) === getETN()) {
+            if (parseInt(data.id, 10) === getETN()) {
                 return;
             }
-            setETN(data[0]);
+            setETN(data.id);
             // Switch to the details tab, which will trigger update
             const infoTab = document.querySelector("#thetabs_tabs a[href='#info']");
             if (infoTab instanceof HTMLElement) {

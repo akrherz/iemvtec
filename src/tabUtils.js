@@ -11,8 +11,8 @@
  * @returns {string} HTML string for the tab
  */
 export function createTabHTML(href, dataUpdate, label, isActive = false) {
-    const activeClass = isActive ? ' class="active"' : '';
-    return `<li${activeClass}><a href="${href}" data-update="${dataUpdate}" onclick="setUpdate('${dataUpdate}');" data-toggle="tab">${label}</a></li>`;
+    const activeClass = isActive ? ' active' : '';
+    return `<li class="nav-item"><a class="nav-link${activeClass}" href="${href}" data-update="${dataUpdate}" onclick="setUpdate('${dataUpdate}');" data-bs-toggle="tab" data-bs-target="${href}">${label}</a></li>`;
 }
 
 /**
