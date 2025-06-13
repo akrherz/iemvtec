@@ -5,6 +5,7 @@ import { setState, getState, StateKeys } from './state.js';
 import { setYear, setWFO, setPhenomena, setSignificance, setETN, 
          getYear, getWFO, getPhenomena, getSignificance, getETN } from './vtecFields.js';
 import { escapeHTML } from 'iemjs/domUtils';
+import { loadTabs } from './dataLoader.js';
 import moment from 'moment';
 
 // Track the last loaded VTEC to detect changes
@@ -59,11 +60,12 @@ export function urlencode() {
  * Important gateway for updating the app
  * fires off a navigateTo call, which may or may not reload the data
  * depending on the VTEC string
+ * @param {boolean} [propogate=true] - Whether to call navigateTo
  * @returns {void}
  */
-export function updateURL() {
+export function updateURL(propogate = true) {
     const params = new URLSearchParams();
-    params.set('year', getYear());
+    params.set('year', `${getYear()}`);
     params.set('wfo', getWFO());
     params.set('phenomena', getPhenomena());
     params.set('significance', getSignificance());
@@ -90,17 +92,10 @@ export function updateURL() {
     
     const url = `?${params.toString()}`;
     document.title = `VTEC Event ${vtecString()}`;
-    navigateTo(url);
-}
-
-/**
- * Push the URL onto the HTML5 history stack
- * and call handleURLChange, which may or may not reload the data
- * @param {String} url
- */
-export function navigateTo(url) {
     history.pushState(null, '', url);
-    handleURLChange(url);
+    if (propogate) {
+        handleURLChange(url);
+    }
 }
 
 /**
@@ -138,10 +133,9 @@ function setActiveTab(tab) {
 /**
  * Parse URL query parameters and update app state
  * @param {URLSearchParams} params - The URL search parameters
- * @param {Function} [loadTabsCallback] - Function to call when VTEC changes
  * @returns {void}
  */
-function handleQueryParams(params, loadTabsCallback) {
+function handleQueryParams(params) {
     const year = params.get('year');
     const wfo = params.get('wfo');
     const phenomena = params.get('phenomena');
@@ -183,22 +177,21 @@ function handleQueryParams(params, loadTabsCallback) {
         setUpdateTab(update);
     }
     
-    if (loadTabsCallback && loadedVTEC !== vtecString()) {
-        loadTabsCallback();
+    if (loadedVTEC !== vtecString()) {
+        loadTabs();
     }
 }
 
 /**
  * Process the URL and update the app state
  * @param {String} url
- * @param {Function} [loadTabsCallback] - Function to call when VTEC changes
  * @returns {void}
  */
-export function handleURLChange(url, loadTabsCallback) {
+export function handleURLChange(url) {
     // Check if this is a query parameter URL (new format)
     const urlObj = new URL(url, window.location.origin);
     if (urlObj.search) {
-        handleQueryParams(urlObj.searchParams, loadTabsCallback);
+        handleQueryParams(urlObj.searchParams);
         return;
     }
     
@@ -241,29 +234,25 @@ export function handleURLChange(url, loadTabsCallback) {
         }
     }
     
-    if (loadTabsCallback && loadedVTEC !== vtecString()) {
-        loadTabsCallback();
+    if (loadedVTEC !== vtecString()) {
+        loadTabs();
     }
-    
-    // Migrate legacy URL to new format
-    updateURL();
 }
 
 /**
  * Initialization time check of URI and consume what it sets
- * @param {Function} [loadTabsCallback] - Optional callback for tab loading
  * @returns {void}
  */
-export function consumeInitialURL(loadTabsCallback) {
+export function consumeInitialURL() {
     // Check for query parameters first (new format)
     if (window.location.search) {
-        handleURLChange(window.location.href, loadTabsCallback);
+        handleURLChange(window.location.href);
         return;
     }
     
     // Check for RESTish URLs (legacy format)
     if (window.location.pathname.startsWith('/event')) {
-        handleURLChange(window.location.pathname, loadTabsCallback);
+        handleURLChange(window.location.pathname);
         return;
     }
     
@@ -273,8 +262,8 @@ export function consumeInitialURL(loadTabsCallback) {
         // No URL parameters - this is a fresh visit to /vtec
         // Initialize the UI but don't load any specific event data
         // Check if we have valid form defaults and should load initial data
-        if (loadTabsCallback && getYear() && getWFO() && getPhenomena() && getSignificance() && getETN()) {
-            loadTabsCallback();
+        if (getYear() && getWFO() && getPhenomena() && getSignificance() && getETN()) {
+            loadTabs();
         }
         return;
     }
@@ -304,5 +293,5 @@ export function consumeInitialURL(loadTabsCallback) {
     params.set('tab', 'info');
     
     const migratedUrl = `?${params.toString()}`;
-    navigateTo(migratedUrl);
+    handleURLChange(migratedUrl);
 }

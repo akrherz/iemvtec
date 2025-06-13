@@ -4,6 +4,13 @@
 
 import './style.css';
 import { main } from './main.js';
+import { setUpdate, selectElementContents } from './appUtils.js';
+
+// Expose functions globally for HTML onclick handlers
+// @ts-ignore
+window.setUpdate = setUpdate;
+// @ts-ignore
+window.selectElementContents = selectElementContents;
 
 // Simple initialization
 class VTECApp {
@@ -15,6 +22,7 @@ class VTECApp {
         // In development, load content dynamically
         await this.loadDevContent();
         // Initialize the main application logic
+        // main() now handles waiting for DOM readiness internally
         main();
     }
 
@@ -27,10 +35,13 @@ class VTECApp {
                 const contentEl = document.getElementById('vtec-content');
                 if (contentEl) {
                     contentEl.innerHTML = content;
+                    console.log('Development: Content loaded successfully');
+                } else {
+                    console.warn('Development: vtec-content element not found');
+                    this.showDevPlaceholder();
                 }
             } else {
                 console.log('Development: Could not load content from file');
-                // Show development placeholder
                 this.showDevPlaceholder();
             }
         } catch (error) {
@@ -59,8 +70,6 @@ class VTECApp {
             `;
         }
     }
-
-
 }
 
 // @ts-ignore

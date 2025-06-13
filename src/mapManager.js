@@ -4,10 +4,10 @@ import { Vector as VectorSource, OSM, XYZ } from 'ol/source';
 import { Overlay, Map, View } from 'ol';
 import { transform } from 'ol/proj';
 import { GeoJSON } from 'ol/format';
-import { VanillaSlider } from './vanillaSlider.js';
-import { requireInputElement, escapeHTML } from 'iemjs/domUtils';
+import { requireSelectElement, escapeHTML } from 'iemjs/domUtils';
 import { setState, getState, StateKeys } from './state.js';
 import { populateSelectFromObjects } from './selectUtils.js';
+import { updateTimeSlider } from './uiManager.js';
 import moment from 'moment';
 
 let olmap = null;
@@ -144,24 +144,39 @@ export function getRadarTimes() {
     return radartimes;
 }
 
-export function getRADARSource() {
-    const dt = radartimes[VanillaSlider.getValue('timeslider')];
-    if (dt === undefined) {
-        return new XYZ({
-            url: '/cache/tile.py/1.0.0/ridge::USCOMP-N0Q-0/{z}/{x}/{y}.png',
-        });
+/**
+ * Get the RADAR source for a specific time index
+ * @param {number} timeIndex 
+ * @returns {XYZ}
+ */
+export function getRADARSource(timeIndex = 0) {
+    const radartimes = getRadarTimes();
+    const dt = radartimes[timeIndex];
+    if (!radartimes || !dt) {
+        console.error(`FIXME: time: ${timeIndex} with radartimes:`, radartimes);
+        const url = 'https://mesonet.agron.iastate.edu/cache/tile.py/1.0.0/ridge::USCOMP-N0Q-0/{z}/{x}/{y}.png';
+        return new XYZ({url});
     }
     radarTMSLayer.set('title', `@ ${dt.format()}`);
-    const radarSourceElement = requireInputElement('radarsource');
-    const radarProductElement = requireInputElement('radarproduct');
+    const radarSourceElement = requireSelectElement('radarsource');
+    const radarProductElement = requireSelectElement('radarproduct');
     const src = escapeHTML(radarSourceElement ? radarSourceElement.value : '');
     const prod = escapeHTML(radarProductElement ? radarProductElement.value : '');
-    const url = `/cache/tile.py/1.0.0/ridge::${src}-${prod}-${dt
+    const url = `https://mesonet.agron.iastate.edu/cache/tile.py/1.0.0/ridge::${src}-${prod}-${dt
         .utc()
         .format('YMMDDHHmm')}/{z}/{x}/{y}.png`;
-    return new XYZ({
-        url,
-    });
+    return new XYZ({url});
+}
+
+/**
+ * Updates the RADAR TMS source and UI elements relevant.
+ * @param {number} timeIndex 
+ */
+export function updateRadarDisplay(timeIndex)  {
+    const layer = getRadarTMSLayer();
+    layer.setSource(getRADARSource(timeIndex));
+    //setState(StateKeys.RADAR_PRODUCT_TIME, dt);
+    //updateTimeLabel(dt);
 }
 
 function make_iem_tms(title, layername, visible, type) {
@@ -171,7 +186,7 @@ function make_iem_tms(title, layername, visible, type) {
         visible,
         type,
         source: new XYZ({
-            url: `/c/tile.py/1.0.0/${layername}/{z}/{x}/{y}.png`,
+            url: `https://mesonet.agron.iastate.edu/c/tile.py/1.0.0/${layername}/{z}/{x}/{y}.png`,
         }),
     });
 }
@@ -252,13 +267,12 @@ export function buildMap() {
     });
 }
 function lsrFeatureHTML(feature) {
-    // Make a pretty HTML feature
     const html = [
-        '<div class="panel panel-default">',
-        '<div class="panel-heading">',
-        '<h3 class="panel-title">Local Storm Report</h3>',
+        '<div class="card">',
+        '<div class="card-header">',
+        '<h5 class="card-title mb-0">Local Storm Report</h5>',
         '</div>',
-        '<div class="panel-body">',
+        '<div class="card-body">',
         `<strong>Event</strong>: ${feature.get('event')}<br />`,
         `<strong>Location</strong>: ${feature.get('city')}<br />`,
         `<strong>Time</strong>: ${moment
@@ -276,10 +290,10 @@ function lsrFeatureHTML(feature) {
  * Query radar service for available RADARs and products
  * and update the UI
  */
-function updateRADARTimeSlider() {
+export function updateRADARTimeSlider() {
     const requestData = {
-        radar: requireInputElement('radarsource').value,
-        product: requireInputElement('radarproduct').value,
+        radar: requireSelectElement('radarsource').value,
+        product: requireSelectElement('radarproduct').value,
         // @ts-ignore
         start: getState(StateKeys.ISSUE).utc().format(),
         // @ts-ignore
@@ -287,7 +301,7 @@ function updateRADARTimeSlider() {
         operation: 'list',
     };
     
-    fetch('/json/radar.py?' + new URLSearchParams(requestData))
+    fetch('https://mesonet.agron.iastate.edu/json/radar.py?' + new URLSearchParams(requestData))
         .then(response => response.json())
         .then(data => {
             // remove previous options
@@ -302,13 +316,13 @@ function updateRADARTimeSlider() {
                 setState(StateKeys.RADAR_PRODUCT_TIME, radartimes[0]);
             }
             let idx = 0;
+            const radarProductTime = getState(StateKeys.RADAR_PRODUCT_TIME);
             radartimes.forEach((rt, i) => {
-                if (rt.isSame(getState(StateKeys.RADAR_PRODUCT_TIME))) {
+                if (rt.isSame(radarProductTime)) {
                     idx = i;
                 }
             });
-            VanillaSlider.setOption('timeslider', 'max', radartimes.length - 1);
-            VanillaSlider.setValue('timeslider', idx);
+            updateTimeSlider(radartimes.length - 1, idx);
         });
 }
 
@@ -322,21 +336,21 @@ export function updateRADARProducts() {
     }
     
     const requestData = {
-        radar: requireInputElement('radarsource').value,
+        radar: requireSelectElement('radarsource').value,
         // @ts-ignore
         start: issue.utc().format(),
         operation: 'products',
     };
     
-    fetch('/json/radar.py?' + new URLSearchParams(requestData))
+    fetch('https://mesonet.agron.iastate.edu/json/radar.py?' + new URLSearchParams(requestData))
         .then(response => response.json())
         .then(data => {
             populateSelectFromObjects('radarproduct', data.products, undefined, 'id', 'name');
             const radarProduct = getState(StateKeys.RADAR_PRODUCT);
             if (radarProduct) {
-                requireInputElement('radarproduct').value = radarProduct;
+                requireSelectElement('radarproduct').value = radarProduct;
             } else {
-                setState(StateKeys.RADAR_PRODUCT, escapeHTML(requireInputElement('radarproduct').value));
+                setState(StateKeys.RADAR_PRODUCT, escapeHTML(requireSelectElement('radarproduct').value));
             }
             // step3
             updateRADARTimeSlider();
@@ -362,15 +376,15 @@ export function updateRADARSources() {
         operation: 'available',
     };
     
-    fetch('/json/radar.py?' + new URLSearchParams(requestData))
+    fetch('https://mesonet.agron.iastate.edu/json/radar.py?' + new URLSearchParams(requestData))
         .then(response => response.json())
         .then(data => {
             populateSelectFromObjects('radarsource', data.radars, undefined, 'id', 'name');
             const radar = getState(StateKeys.RADAR);
             if (radar) {
-                requireInputElement('radarsource').value = radar;
+                requireSelectElement('radarsource').value = radar;
             } else {
-                setState(StateKeys.RADAR, escapeHTML(requireInputElement('radarsource').value));
+                setState(StateKeys.RADAR, escapeHTML(requireSelectElement('radarsource').value));
             }
             // step2
             updateRADARProducts();

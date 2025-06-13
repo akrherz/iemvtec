@@ -7,7 +7,6 @@ import { GeoJSON } from 'ol/format';
 import { requireElement } from 'iemjs/domUtils';
 import { getWFO, getPhenomena, getSignificance, getETN, getYear } from './vtecFields.js';
 import { setState, StateKeys } from './state.js';
-import { updateURL } from './urlUtils.js';
 
 /**
  * called from HTML tag
@@ -16,7 +15,6 @@ import { updateURL } from './urlUtils.js';
 export function setUpdate(val) {
     // skipcq
     setState(StateKeys.ACTIVE_UPDATE, val);
-    updateURL();
 }
 
 

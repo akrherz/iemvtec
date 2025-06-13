@@ -4,11 +4,29 @@
  */
 
 import { requireElement, requireSelectElement, escapeHTML } from 'iemjs/domUtils';
-import { setState, StateKeys } from './state.js';
+import { setState, StateKeys, subscribeToState } from './state.js';
 import { getETN, setETN } from './vtecFields.js';
 import { updateURL, urlencode } from './urlUtils.js';
-import { getMap, getRadarTMSLayer, updateRADARProducts, getRADARSource, getRadarTimes } from './mapManager.js';
-import { VanillaSlider } from './vanillaSlider.js';
+import { updateRADARProducts, updateRADARTimeSlider } from './mapManager.js';
+import { loadTabs } from './dataLoader.js';
+
+/**
+ * Create state subscribers for the application
+ */
+function createStateSubscribers() {
+    subscribeToState(StateKeys.RADAR, () => {
+        updateURL(false);
+    });
+    subscribeToState(StateKeys.RADAR_PRODUCT, () => {
+        updateURL(false);
+    });
+    subscribeToState(StateKeys.RADAR_PRODUCT_TIME, () => {
+        updateURL(false);
+    });
+    subscribeToState(StateKeys.ACTIVE_TAB, () => {
+        updateURL(false);
+    });
+}
 
 /**
  * Utility function to create a button click handler that blurs and updates URL
@@ -18,7 +36,7 @@ import { VanillaSlider } from './vanillaSlider.js';
 function createButtonHandler(action) {
     return function() {
         action();
-        updateURL();
+        loadTabs();
         /** @type {HTMLElement} */ (this).blur();
     };
 }
@@ -57,27 +75,25 @@ function createSelectHandler(stateKey, valueExtractor, additionalAction) {
  * Setup tab navigation event handlers
  */
 export function setupTabHandlers() {
-    // Bootstrap 5 tab shown event - let Bootstrap handle the tab switching
-    document.querySelectorAll('a[data-bs-toggle="tab"]').forEach(tabElement => {
-        // Listen for Bootstrap's tab shown event instead of click
-        tabElement.addEventListener('shown.bs.tab', (e) => {
-            const target = e.target;
-            if (target instanceof HTMLLinkElement) {
-                // Update our internal state when tab is shown
+    const tabElements = document.querySelectorAll('a[data-bs-toggle="tab"]');
+    
+    tabElements.forEach(tabElement => {
+        
+        // Fallback: Listen for click events in case Bootstrap events don't fire
+        tabElement.addEventListener('click', (e) => {
+            const target = e.currentTarget;
+            if (target instanceof HTMLElement) {
                 const href = target.getAttribute('href');
+                console.log('Tab href:', href);
                 if (href) {
-                    const tabId = href.substring(1); // Remove the # symbol
+                    const tabId = href.substring(1);
                     setState(StateKeys.ACTIVE_TAB, tabId);
-                    updateURL();
-                    
-                    // Handle map resize for the map tab
-                    if (href === '#themap') {
-                        getMap().updateSize();
-                    }
                 }
             }
         });
     });
+    
+    console.log(`Finished setting up tab handlers for ${tabElements.length} elements`);
 }
 
 /**
@@ -139,54 +155,10 @@ export function setupSelectHandlers() {
         createSelectHandler(StateKeys.RADAR, () => requireSelectElement('radarsource').value, updateRADARProducts)
     );
     requireSelectElement('radarproduct').addEventListener('change', 
-        createSelectHandler(StateKeys.RADAR_PRODUCT, () => requireSelectElement('radarproduct').value, () => {
-            getRadarTMSLayer().setSource(getRADARSource());
-        })
+        createSelectHandler(StateKeys.RADAR_PRODUCT, () => requireSelectElement('radarproduct').value, updateRADARTimeSlider)
     );
 }
 
-/**
- * Setup slider controls for radar interface
- */
-export function setupSliderHandlers() {
-    // Initialize radar opacity slider
-    new VanillaSlider('radaropacity', {
-        min: 0,
-        max: 100,
-        value: 100,
-        onSlide: (value) => {
-            getRadarTMSLayer().setOpacity(parseInt(value) / 100.0);
-        }
-    });
-    
-    // Initialize time slider  
-    new VanillaSlider('timeslider', {
-        min: 0,
-        max: 100,
-        onChange: (value) => {
-            const radartimes = getRadarTimes();
-            if (radartimes[value] === undefined) {
-                return;
-            }
-            setState(StateKeys.RADAR_PRODUCT_TIME, radartimes[value]);
-            getRadarTMSLayer().setSource(getRADARSource());
-            const label = radartimes[value]
-                .local()
-                .format('D MMM YYYY h:mm A');
-            const radarTimeElement = requireElement('radartime');
-            radarTimeElement.innerHTML = label;
-            updateURL();
-        },
-        onSlide: (value) => {
-            const radartimes = getRadarTimes();
-            const label = radartimes[value]
-                .local()
-                .format('D MMM YYYY h:mm A');
-            requireElement('radartime').innerHTML = label;
-            updateURL();
-        }
-    });
-}
 
 /**
  * Setup event table row click handler
@@ -208,10 +180,10 @@ export function setupEventTableHandler(eventTable) {
             }
             
             const data = eventTable.row(tr).data();
-            if (parseInt(data[0], 10) === getETN()) {
+            if (parseInt(data.id, 10) === getETN()) {
                 return;
             }
-            setETN(data[0]);
+            setETN(data.id);
             // Switch to the details tab, which will trigger update
             const infoTab = document.querySelector("#thetabs_tabs a[href='#info']");
             if (infoTab instanceof HTMLElement) {
@@ -229,6 +201,6 @@ export function setupEventHandlers(eventTable) {
     setupTabHandlers();
     setupButtonHandlers();
     setupSelectHandlers();
-    setupSliderHandlers();
     setupEventTableHandler(eventTable);
+    createStateSubscribers();
 }

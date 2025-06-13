@@ -53,11 +53,9 @@ export function initializeETN() {
  * Initialize all form controls with their default values and options
  */
 export function initializeForm() {
-    console.log('Starting form initialization...');
     initializeWFOSelect();
     initializePhenomenaSelect();
     initializeSignificanceSelect();
     initializeYearSelect();
     initializeETN();
-    console.log('Form initialization completed');
 }

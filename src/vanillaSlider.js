@@ -1,3 +1,4 @@
+// @ts-nocheck
 // Vanilla JavaScript slider component to replace jQuery UI sliders
 import { getElement } from 'iemjs/domUtils';
 
@@ -50,6 +51,10 @@ export class VanillaSlider {
             value: config.value
         };
 
+        // Store reference to sliderData for instance methods
+        this.sliderData = sliderData;
+        this.elementId = elementId;
+
         // Store instance data on the container (using non-standard property)
         container.vanillaSlider = sliderData;
 
@@ -58,6 +63,50 @@ export class VanillaSlider {
 
         // Add event listeners
         VanillaSlider.addEventListeners(sliderData);
+    }
+
+    /**
+     * Get current slider value
+     * @returns {number} Current value
+     */
+    getValue() {
+        return this.sliderData.value;
+    }
+
+    /**
+     * Set slider value
+     * @param {number} value - New value to set
+     * @param {boolean} triggerChange - Whether to trigger onChange event (default: true)
+     */
+    setValue(value, triggerChange = true) {
+        VanillaSlider.setSliderValue(this.sliderData, value);
+        if (triggerChange) {
+            VanillaSlider.triggerChange(this.sliderData);
+        }
+    }
+
+    /**
+     * Set slider option
+     * @param {string} option - Option name (min, max, step, etc.)
+     * @param {*} value - Option value
+     */
+    setOption(option, value) {
+        this.sliderData.config[option] = value;
+        
+        if (option === 'min' || option === 'max') {
+            this.sliderData.thumb?.setAttribute(`aria-value${option}`, value);
+            VanillaSlider.updateSliderPosition(this.sliderData);
+        }
+    }
+
+    /**
+     * Destroy the slider instance
+     */
+    destroy() {
+        if (this.sliderData.container) {
+            this.sliderData.container.innerHTML = '';
+            delete this.sliderData.container.vanillaSlider;
+        }
     }
 
     static addStyles() {

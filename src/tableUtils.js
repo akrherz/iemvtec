@@ -18,20 +18,20 @@ export function getSBWLSRTable() {
 }
 
 export function initEventTable() {
-
-     const eventTableElement = document.getElementById('eventtable');
+    const eventTableElement = document.getElementById('eventtable');
     if (eventTableElement) {
         eventTable = new DataTable(eventTableElement, {
             columns: [
-                { data: 0 }, // ID
-                { data: 1 }, // Product Issued
-                { data: 2 }, // VTEC Issued
-                { data: 3 }, // Initial Expire
-                { data: 4 }, // VTEC Expire
-                { data: 5 }, // Area km**2
-                { data: 6 }, // Locations
-                { data: 7 }  // Signature
-            ]
+                { data: 'id' },
+                { data: 'product_issued' },
+                { data: 'vtec_issued' },
+                { data: 'initial_expire' },
+                { data: 'vtec_expire' },
+                { data: 'area_km2' },
+                { data: 'locations' },
+                { data: 'signature' }
+            ],
+            data: []
         });
     }
 }
@@ -65,7 +65,7 @@ function makeLSRTable(div) {
                 data: null,
                 defaultContent: '',
                 render: () => {
-                    return '<i class="fa fa-plus-square" aria-hidden="true"></i>';
+                    return '<i class="bi bi-plus-square" aria-hidden="true"></i>';
                 },
                 width: '15px',
             },
@@ -95,26 +95,25 @@ function makeLSRTable(div) {
         if (!tr) {
             return;
         }
-        
-        const icon = tr.querySelector('i.fa');
+         const icon = tr.querySelector('i.bi');
         if (!icon) {
             return;
         }
-        
+
         const row = lsrTable.row(tr);
 
         if (row.child.isShown()) {
             // This row is already open - close it
             row.child.hide();
             tr.classList.remove('shown');
-            icon.classList.remove('fa-minus-square');
-            icon.classList.add('fa-plus-square');
+            icon.classList.remove('bi-dash-square');
+            icon.classList.add('bi-plus-square');
         } else {
             // Open this row
             row.child(remarkformat(row.data())).show();
             tr.classList.add('shown');
-            icon.classList.remove('fa-plus-square');
-            icon.classList.add('fa-minus-square');
+            icon.classList.remove('bi-plus-square');
+            icon.classList.add('bi-dash-square');
         }
     });
 
