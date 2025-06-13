@@ -5,7 +5,7 @@ import { Overlay, Map, View } from 'ol';
 import { transform } from 'ol/proj';
 import { GeoJSON } from 'ol/format';
 import { VanillaSlider } from './vanillaSlider.js';
-import { requireInputElement, escapeHTML } from 'iemjs/domUtils';
+import { requireSelectElement, escapeHTML } from 'iemjs/domUtils';
 import { setState, getState, StateKeys } from './state.js';
 import { populateSelectFromObjects } from './selectUtils.js';
 import moment from 'moment';
@@ -152,8 +152,8 @@ export function getRADARSource() {
         });
     }
     radarTMSLayer.set('title', `@ ${dt.format()}`);
-    const radarSourceElement = requireInputElement('radarsource');
-    const radarProductElement = requireInputElement('radarproduct');
+    const radarSourceElement = requireSelectElement('radarsource');
+    const radarProductElement = requireSelectElement('radarproduct');
     const src = escapeHTML(radarSourceElement ? radarSourceElement.value : '');
     const prod = escapeHTML(radarProductElement ? radarProductElement.value : '');
     const url = `https://mesonet.agron.iastate.edu/cache/tile.py/1.0.0/ridge::${src}-${prod}-${dt
@@ -252,13 +252,12 @@ export function buildMap() {
     });
 }
 function lsrFeatureHTML(feature) {
-    // Make a pretty HTML feature
     const html = [
-        '<div class="panel panel-default">',
-        '<div class="panel-heading">',
-        '<h3 class="panel-title">Local Storm Report</h3>',
+        '<div class="card">',
+        '<div class="card-header">',
+        '<h5 class="card-title mb-0">Local Storm Report</h5>',
         '</div>',
-        '<div class="panel-body">',
+        '<div class="card-body">',
         `<strong>Event</strong>: ${feature.get('event')}<br />`,
         `<strong>Location</strong>: ${feature.get('city')}<br />`,
         `<strong>Time</strong>: ${moment
@@ -278,8 +277,8 @@ function lsrFeatureHTML(feature) {
  */
 function updateRADARTimeSlider() {
     const requestData = {
-        radar: requireInputElement('radarsource').value,
-        product: requireInputElement('radarproduct').value,
+        radar: requireSelectElement('radarsource').value,
+        product: requireSelectElement('radarproduct').value,
         // @ts-ignore
         start: getState(StateKeys.ISSUE).utc().format(),
         // @ts-ignore
@@ -287,7 +286,7 @@ function updateRADARTimeSlider() {
         operation: 'list',
     };
     
-    fetch('/json/radar.py?' + new URLSearchParams(requestData))
+    fetch('https://mesonet.agron.iastate.edu/json/radar.py?' + new URLSearchParams(requestData))
         .then(response => response.json())
         .then(data => {
             // remove previous options
@@ -322,7 +321,7 @@ export function updateRADARProducts() {
     }
     
     const requestData = {
-        radar: requireInputElement('radarsource').value,
+        radar: requireSelectElement('radarsource').value,
         // @ts-ignore
         start: issue.utc().format(),
         operation: 'products',
@@ -334,9 +333,9 @@ export function updateRADARProducts() {
             populateSelectFromObjects('radarproduct', data.products, undefined, 'id', 'name');
             const radarProduct = getState(StateKeys.RADAR_PRODUCT);
             if (radarProduct) {
-                requireInputElement('radarproduct').value = radarProduct;
+                requireSelectElement('radarproduct').value = radarProduct;
             } else {
-                setState(StateKeys.RADAR_PRODUCT, escapeHTML(requireInputElement('radarproduct').value));
+                setState(StateKeys.RADAR_PRODUCT, escapeHTML(requireSelectElement('radarproduct').value));
             }
             // step3
             updateRADARTimeSlider();
@@ -362,15 +361,15 @@ export function updateRADARSources() {
         operation: 'available',
     };
     
-    fetch('/json/radar.py?' + new URLSearchParams(requestData))
+    fetch('https://mesonet.agron.iastate.edu/json/radar.py?' + new URLSearchParams(requestData))
         .then(response => response.json())
         .then(data => {
             populateSelectFromObjects('radarsource', data.radars, undefined, 'id', 'name');
             const radar = getState(StateKeys.RADAR);
             if (radar) {
-                requireInputElement('radarsource').value = radar;
+                requireSelectElement('radarsource').value = radar;
             } else {
-                setState(StateKeys.RADAR, escapeHTML(requireInputElement('radarsource').value));
+                setState(StateKeys.RADAR, escapeHTML(requireSelectElement('radarsource').value));
             }
             // step2
             updateRADARProducts();
