@@ -80,7 +80,7 @@ export function loadVTECEventData(ugcTable, lsrTable, sbwLsrTable) {
                                       createTabPaneHTML('t0', `${plink}<pre>${data.report.text}</pre>`, true);
                 
                 let tidx = 1;
-                data.svs.forEach((_idx, svs) => {
+                data.svs.forEach(svs => {
                     const splink = `<a href="/p.php?pid=${svs.product_id}" target="_new">Permalink to ${svs.product_id}</a><br />`;
                     const sstamp = moment.utc(svs.valid).local().format('DD/h:mm A');
                     const supdate = moment.utc(svs.valid).format('YYYYMMDDHHmm');
