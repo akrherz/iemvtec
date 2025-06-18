@@ -295,7 +295,6 @@ export function buildMap() {
     });
 }
 function lsrFeatureHTML(feature) {
-    console.log('lsrFeatureHTML', feature);
     const dt = moment.utc(feature.get('utc_valid'));
     const html = [
         '<div class="card">',

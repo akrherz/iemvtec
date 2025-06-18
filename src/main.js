@@ -33,7 +33,6 @@ function isDOMReady() {
         }
     }
     
-    console.log('DOM is ready for initialization');
     return true;
 }
 
