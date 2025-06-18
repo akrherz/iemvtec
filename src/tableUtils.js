@@ -2,6 +2,7 @@
  * Table utility functions for DataTable creation and management
  */
 import DataTable from 'datatables.net-dt';
+import { requireElement } from 'iemjs/domUtils';
 
 let lsrTable = null;
 let sbwLsrTable = null;
@@ -42,7 +43,11 @@ export function initEventTable() {
  * @returns {string} HTML string for the remark display
  */
 function remarkformat(d) {
-    return `<div style="margin-left: 10px;"><strong>Remark:</strong> ${d.remark}</div>`;
+    console.log(d);
+    return `<div style="margin-left: 10px;">` +
+        '<strong>NWS Product:</strong>' +
+        `<a target="_new" href="/p.php?pid=${d.product_id}">LSR Link</a> ` +
+        `<strong>Remark:</strong> ${d.remark}</div>`;
 }
 
 /**
@@ -50,12 +55,7 @@ function remarkformat(d) {
  * @param {string} div - The ID of the table element
  */
 function makeLSRTable(div) {
-    const tableElement = document.getElementById(div);
-    if (!tableElement) {
-        console.error(`Table element with id ${div} not found`);
-        return null;
-    }
-    
+    const tableElement = requireElement(div);
     const table = new DataTable(tableElement, {
         select: 'single',
         columns: [
@@ -100,7 +100,7 @@ function makeLSRTable(div) {
             return;
         }
 
-        const row = lsrTable.row(tr);
+        const row = table.row(tr);
 
         if (row.child.isShown()) {
             // This row is already open - close it

@@ -5,6 +5,10 @@ You can abbreviate the rule description to a single word or phrase.
 
 ## Rules
 
+- **NO MOCKS EVER** 
+  - Do not use mocks in any tests. All tests should use real data and real
+    components. If you decide a mock is needed, please have me approve it
+    first and provide a valid reason why a mock is necessary.
 - Do not add code comments detailing what you modified. Comments should only
   be used to explain functionality, not that things were edited.
 - Do not attempt to run node for testing purposes.

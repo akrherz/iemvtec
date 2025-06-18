@@ -302,6 +302,8 @@ function lsrFeatureHTML(feature) {
         '<h5 class="card-title mb-0">Local Storm Report</h5>',
         '</div>',
         '<div class="card-body">',
+        '<strong>NWS Product</strong>: <a target="new" ',
+        `href="/p.php?pid=${feature.get('product_id')}">LSR Text</a><br />`,
         `<strong>Event</strong>: ${feature.get('event')}<br />`,
         `<strong>Location</strong>: ${feature.get('city')}<br />`,
         `<strong>Time</strong>: ${dt.local().format('MMM Do, h:mm a')} `,
