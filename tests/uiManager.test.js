@@ -13,6 +13,10 @@ jest.mock('iemjs/domUtils', () => ({
     }))
 }));
 
+jest.mock('ol-layerswitcher', () => {
+    return jest.fn().mockImplementation(() => ({}));
+});
+
 jest.mock('../src/vanillaSlider.js', () => ({
     VanillaSlider: jest.fn(() => ({
         getValue: jest.fn(() => 50),

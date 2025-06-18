@@ -118,6 +118,10 @@ jest.mock('ol/format', () => ({
     GeoJSON: jest.fn().mockImplementation(() => ({}))
 }));
 
+jest.mock('ol-layerswitcher', () => {
+    return jest.fn().mockImplementation(() => ({}));
+});
+
 // Mock other dependencies
 jest.mock('iemjs/domUtils', () => ({
     requireElement: jest.fn(() => ({ 

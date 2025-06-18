@@ -40,6 +40,7 @@
     "iemjs": "0.0.7",
     "moment": "^2.30.1",
     "ol": "latest",
+    "ol-layerswitcher": "4.1.2",
     "prettier": "^3.5.3",
     "strftime": "^0.10.3",
     "tom-select": "^2.4.3"
