@@ -84,7 +84,6 @@ export function setupTabHandlers() {
             const target = e.currentTarget;
             if (target instanceof HTMLElement) {
                 const href = target.getAttribute('href');
-                console.log('Tab href:', href);
                 if (href) {
                     const tabId = href.substring(1);
                     setState(StateKeys.ACTIVE_TAB, tabId);
@@ -92,8 +91,6 @@ export function setupTabHandlers() {
             }
         });
     });
-    
-    console.log(`Finished setting up tab handlers for ${tabElements.length} elements`);
 }
 
 /**
@@ -122,27 +119,80 @@ export function setupButtonHandlers() {
     // Print button
     requireElement('toolbar-print').addEventListener('click', function () {
         this.blur();
-        const activeTab = document.querySelector('#textdata .nav-tabs li.active a');
-        if (activeTab instanceof HTMLLinkElement) {
-            const tabid = activeTab.getAttribute('href');
+        
+        // Find the active tab in the text data section
+        const activeTab = document.querySelector('#textdata .nav-tabs .nav-link.active');
+        
+        if (activeTab && activeTab.tagName === 'A') {
+            const tabid = activeTab.getAttribute('href') || activeTab.getAttribute('data-bs-target');
+            
             if (tabid) {
                 const divToPrint = document.querySelector(tabid);
+                
                 if (divToPrint) {
-                    const newWin = window.open('', 'Print-Window');
-                    if (newWin) {
-                        newWin.document.open();
-                        newWin.document.write(
-                            `<html><body onload="window.print()">${divToPrint.innerHTML}</body></html>`
-                        );
-                        newWin.document.close();
-                        setTimeout(() => {
+                    const content = divToPrint.innerHTML;
+                    if (content && content.trim() !== '' && content !== 'Text Product Issuance') {
+                        try {
+                            // Try to open popup window for printing
+                            const newWin = window.open('', 'Print-Window', 'width=800,height=600,scrollbars=yes');
                             if (newWin) {
-                                newWin.close();
+                                newWin.document.open();
+                                newWin.document.write(`
+                                    <!DOCTYPE html>
+                                    <html>
+                                        <head>
+                                            <title>Print - VTEC Text Data</title>
+                                            <style>
+                                                body { 
+                                                    font-family: monospace; 
+                                                    margin: 20px; 
+                                                    line-height: 1.4;
+                                                }
+                                                pre { 
+                                                    white-space: pre-wrap; 
+                                                    word-wrap: break-word; 
+                                                    font-size: 12px;
+                                                }
+                                                @media print {
+                                                    body { margin: 0.5in; }
+                                                }
+                                            </style>
+                                        </head>
+                                        <body>
+                                            <h2>VTEC Text Data</h2>
+                                            ${content}
+                                            <script>
+                                                window.onload = function() {
+                                                    window.print();
+                                                    // Close after a delay to allow printing
+                                                    setTimeout(function() {
+                                                        window.close();
+                                                    }, 1000);
+                                                };
+                                            </script>
+                                        </body>
+                                    </html>
+                                `);
+                                newWin.document.close();
+                                newWin.focus();
+                            } else {
+                                // Popup was blocked, inform user
+                                alert('Print popup was blocked by your browser. Please allow popups for this site and try again.');
                             }
-                        }, 10);
+                        } catch (error) {
+                            alert('Unable to open print dialog. Error: ' + error.message);
+                        }
+                    } else {
+                        alert('No content available to print. Please select an event first.');
                     }
+                } else {
+                    alert('Could not find content to print.');
                 }
+            } else {
+                alert('Could not determine what to print.');
             }
+        } else {
+            alert('No active tab found to print.');
         }
     });
 }
