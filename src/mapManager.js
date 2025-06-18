@@ -296,6 +296,7 @@ export function buildMap() {
 }
 function lsrFeatureHTML(feature) {
     console.log('lsrFeatureHTML', feature);
+    const dt = moment.utc(feature.get('utc_valid'));
     const html = [
         '<div class="card">',
         '<div class="card-header">',
@@ -304,9 +305,8 @@ function lsrFeatureHTML(feature) {
         '<div class="card-body">',
         `<strong>Event</strong>: ${feature.get('event')}<br />`,
         `<strong>Location</strong>: ${feature.get('city')}<br />`,
-        `<strong>Time</strong>: ${moment
-            .utc(feature.get('utc_valid'))
-            .format('MMM Do, h:mm a')}<br />`,
+        `<strong>Time</strong>: ${dt.local().format('MMM Do, h:mm a')} `,
+        `(${dt.utc().format('HH:mm')} UTC)<br />`,
         `<strong>Magnitude</strong>: ${feature.get('magnitude')}<br />`,
         `<strong>Remark</strong>: ${feature.get('remark')}<br />`,
         '</div>',
