@@ -1,3 +1,4 @@
+import 'ol-layerswitcher/dist/ol-layerswitcher.css';
 import { Style, Icon, Stroke, Circle, Fill, Text } from 'ol/style';
 import { Tile, Vector } from 'ol/layer';
 import { Vector as VectorSource, OSM, XYZ } from 'ol/source';
@@ -8,6 +9,7 @@ import { requireSelectElement, escapeHTML } from 'iemjs/domUtils';
 import { setState, getState, StateKeys } from './state.js';
 import { populateSelectFromObjects } from './selectUtils.js';
 import { updateTimeSlider } from './uiManager.js';
+import LayerSwitcher from 'ol-layerswitcher';
 import moment from 'moment';
 
 let olmap = null;
@@ -36,92 +38,100 @@ const sbwLookup = {
 };
 
 const lsrLookup = {
-    0: '/lsr/icons/tropicalstorm.gif',
-    1: '/lsr/icons/flood.png',
-    2: '/lsr/icons/other.png',
-    3: '/lsr/icons/other.png',
-    4: '/lsr/icons/other.png',
-    5: '/lsr/icons/ice.png',
-    6: '/lsr/icons/cold.png',
-    7: '/lsr/icons/cold.png',
-    8: '/lsr/icons/fire.png',
-    9: '/lsr/icons/other.png',
-    a: '/lsr/icons/other.png',
-    A: '/lsr/icons/wind.png',
-    B: '/lsr/icons/downburst.png',
-    C: '/lsr/icons/funnelcloud.png',
-    D: '/lsr/icons/winddamage.png',
-    E: '/lsr/icons/flood.png',
-    F: '/lsr/icons/flood.png',
-    v: '/lsr/icons/flood.png',
-    G: '/lsr/icons/wind.png',
-    h: '/lsr/icons/hail.png',
-    H: '/lsr/icons/hail.png',
-    I: '/lsr/icons/hot.png',
-    J: '/lsr/icons/fog.png',
-    K: '/lsr/icons/lightning.gif',
-    L: '/lsr/icons/lightning.gif',
-    M: '/lsr/icons/wind.png',
-    N: '/lsr/icons/wind.png',
-    O: '/lsr/icons/wind.png',
-    P: '/lsr/icons/other.png',
-    Q: '/lsr/icons/tropicalstorm.gif',
-    R: '/vendor/icons/lsr/rain/{{magnitude}}.png',
-    s: '/lsr/icons/sleet.png',
-    S: '/vendor/icons/lsr/snow/{{magnitude}}.png',
-    T: '/lsr/icons/tornado.png',
-    U: '/lsr/icons/fire.png',
-    V: '/lsr/icons/avalanche.gif',
-    W: '/lsr/icons/waterspout.png',
-    X: '/lsr/icons/funnelcloud.png',
-    Z: '/lsr/icons/blizzard.png',
+    0: 'https://mesonet.agron.iastate.edu/lsr/icons/tropicalstorm.gif',
+    1: 'https://mesonet.agron.iastate.edu/lsr/icons/flood.png',
+    2: 'https://mesonet.agron.iastate.edu/lsr/icons/other.png',
+    3: 'https://mesonet.agron.iastate.edu/lsr/icons/other.png',
+    4: 'https://mesonet.agron.iastate.edu/lsr/icons/other.png',
+    5: 'https://mesonet.agron.iastate.edu/lsr/icons/ice.png',
+    6: 'https://mesonet.agron.iastate.edu/lsr/icons/cold.png',
+    7: 'https://mesonet.agron.iastate.edu/lsr/icons/cold.png',
+    8: 'https://mesonet.agron.iastate.edu/lsr/icons/fire.png',
+    9: 'https://mesonet.agron.iastate.edu/lsr/icons/other.png',
+    a: 'https://mesonet.agron.iastate.edu/lsr/icons/other.png',
+    A: 'https://mesonet.agron.iastate.edu/lsr/icons/wind.png',
+    B: 'https://mesonet.agron.iastate.edu/lsr/icons/downburst.png',
+    C: 'https://mesonet.agron.iastate.edu/lsr/icons/funnelcloud.png',
+    D: 'https://mesonet.agron.iastate.edu/lsr/icons/winddamage.png',
+    E: 'https://mesonet.agron.iastate.edu/lsr/icons/flood.png',
+    F: 'https://mesonet.agron.iastate.edu/lsr/icons/flood.png',
+    v: 'https://mesonet.agron.iastate.edu/lsr/icons/flood.png',
+    G: 'https://mesonet.agron.iastate.edu/lsr/icons/wind.png',
+    h: 'https://mesonet.agron.iastate.edu/lsr/icons/hail.png',
+    H: 'https://mesonet.agron.iastate.edu/lsr/icons/hail.png',
+    I: 'https://mesonet.agron.iastate.edu/lsr/icons/hot.png',
+    J: 'https://mesonet.agron.iastate.edu/lsr/icons/fog.png',
+    K: 'https://mesonet.agron.iastate.edu/lsr/icons/lightning.gif',
+    L: 'https://mesonet.agron.iastate.edu/lsr/icons/lightning.gif',
+    M: 'https://mesonet.agron.iastate.edu/lsr/icons/wind.png',
+    N: 'https://mesonet.agron.iastate.edu/lsr/icons/wind.png',
+    O: 'https://mesonet.agron.iastate.edu/lsr/icons/wind.png',
+    P: 'https://mesonet.agron.iastate.edu/lsr/icons/other.png',
+    Q: 'https://mesonet.agron.iastate.edu/lsr/icons/tropicalstorm.gif',
+    R: 'https://mesonet.agron.iastate.edu/lsr/rain/{{magnitude}}.png',
+    s: 'https://mesonet.agron.iastate.edu/lsr/icons/sleet.png',
+    S: 'https://mesonet.agron.iastate.edu/lsr/snow/{{magnitude}}.png',
+    T: 'https://mesonet.agron.iastate.edu/lsr/icons/tornado.png',
+    U: 'https://mesonet.agron.iastate.edu/lsr/icons/fire.png',
+    V: 'https://mesonet.agron.iastate.edu/lsr/icons/avalanche.gif',
+    W: 'https://mesonet.agron.iastate.edu/lsr/icons/waterspout.png',
+    X: 'https://mesonet.agron.iastate.edu/lsr/icons/funnelcloud.png',
+    Z: 'https://mesonet.agron.iastate.edu/lsr/icons/blizzard.png',
 };
 
-const lsrStyle = new Style({
-    image: new Icon({ src: lsrLookup['9'] }),
-});
+function createLSRStyle() {
+    return new Style({
+        image: new Icon({ src: lsrLookup['9'] }),
+    });
+}
 
-const sbwStyle = [
-    new Style({
-        stroke: new Stroke({
-            color: '#FFF',
-            width: 4.5,
+function createSBWStyle() {
+    return [
+        new Style({
+            stroke: new Stroke({
+                color: '#FFF',
+                width: 4.5,
+            }),
         }),
-    }),
-    new Style({
-        stroke: new Stroke({
-            color: '#319FD3',
-            width: 3,
+        new Style({
+            stroke: new Stroke({
+                color: '#319FD3',
+                width: 3,
+            }),
         }),
-    }),
-];
+    ];
+}
 
-const sbwIntersectionStyle = [
-    new Style({
-        stroke: new Stroke({
-            color: '#551A8B',
-            width: 10,
+function createSBWIntersectionStyle() {
+    return [
+        new Style({
+            stroke: new Stroke({
+                color: '#551A8B',
+                width: 10,
+            }),
         }),
-    }),
-];
+    ];
+}
 
-const textStyle = new Style({
-    image: new Circle({
-        radius: 10,
-        stroke: new Stroke({
-            color: '#fff',
+function createTextStyle() {
+    return new Style({
+        image: new Circle({
+            radius: 10,
+            stroke: new Stroke({
+                color: '#fff',
+            }),
+            fill: new Fill({
+                color: '#3399CC',
+            }),
         }),
-        fill: new Fill({
-            color: '#3399CC',
+        text: new Text({
+            font: 'bold 11px "Open Sans", "Arial Unicode MS", "sans-serif"',
+            fill: new Fill({
+                color: 'white',
+            }),
         }),
-    }),
-    text: new Text({
-        font: 'bold 11px "Open Sans", "Arial Unicode MS", "sans-serif"',
-        fill: new Fill({
-            color: 'white',
-        }),
-    }),
-});
+    });
+}
 
 export function getProductVectorCountyLayer() {
     return productVectorCountyLayer;
@@ -175,8 +185,6 @@ export function getRADARSource(timeIndex = 0) {
 export function updateRadarDisplay(timeIndex)  {
     const layer = getRadarTMSLayer();
     layer.setSource(getRADARSource(timeIndex));
-    //setState(StateKeys.RADAR_PRODUCT_TIME, dt);
-    //updateTimeLabel(dt);
 }
 
 function make_iem_tms(title, layername, visible, type) {
@@ -194,6 +202,19 @@ function make_iem_tms(title, layername, visible, type) {
 
 export function buildMap() {
     element = document.getElementById('popup');
+    if (!element) {
+        console.error('Popup element with id "popup" not found in DOM');
+        return;
+    }
+    
+    // Set up close button handler
+    const closer = document.getElementById('popup-closer');
+    if (closer) {
+        closer.onclick = function() {
+            element.style.display = 'none';
+            return false;
+        };
+    }
     // Build up the mapping
     radarTMSLayer = new Tile({
         // @ts-ignore
@@ -221,7 +242,7 @@ export function buildMap() {
     sbwIntersectionLayer = new Vector({
         // @ts-ignore
         title: 'SBW County Intersection',
-        style: sbwIntersectionStyle,
+        style: createSBWIntersectionStyle(),
         source: new VectorSource({
             format: new GeoJSON(),
         }),
@@ -231,6 +252,7 @@ export function buildMap() {
         // @ts-ignore
         title: 'VTEC Product Polygon',
         style: (feature) => {
+            const sbwStyle = createSBWStyle();
             sbwStyle[1]
                 .getStroke()
                 ?.setColor(sbwLookup[feature.get('phenomena')]);
@@ -244,18 +266,24 @@ export function buildMap() {
     lsrLayer = new Vector({
         // @ts-ignore
         title: 'Local Storm Reports',
+        visible: true, // Ensure the layer is visible by default
+        zIndex: 1000, // Put LSR layer on top
         style: (feature) => {
             if (feature.get('type') === 'S' || feature.get('type') === 'R') {
+                const textStyle = createTextStyle();
                 textStyle
                     .getText()
                     ?.setText(feature.get('magnitude').toString());
                 return textStyle;
             }
+            const lsrStyle = createLSRStyle();
             let url = lsrLookup[feature.get('type')];
             if (url) {
                 url = url.replace('{{magnitude}}', feature.get('magnitude'));
                 const icon = new Icon({
                     src: url,
+                    scale: 1,
+                    anchor: [0.5, 0.5],
                 });
                 lsrStyle.setImage(icon);
             }
@@ -267,6 +295,7 @@ export function buildMap() {
     });
 }
 function lsrFeatureHTML(feature) {
+    const dt = moment.utc(feature.get('utc_valid'));
     const html = [
         '<div class="card">',
         '<div class="card-header">',
@@ -275,9 +304,8 @@ function lsrFeatureHTML(feature) {
         '<div class="card-body">',
         `<strong>Event</strong>: ${feature.get('event')}<br />`,
         `<strong>Location</strong>: ${feature.get('city')}<br />`,
-        `<strong>Time</strong>: ${moment
-            .utc(feature.get('utc_valid'))
-            .format('MMM Do, h:mm a')}<br />`,
+        `<strong>Time</strong>: ${dt.local().format('MMM Do, h:mm a')} `,
+        `(${dt.utc().format('HH:mm')} UTC)<br />`,
         `<strong>Magnitude</strong>: ${feature.get('magnitude')}<br />`,
         `<strong>Remark</strong>: ${feature.get('remark')}<br />`,
         '</div>',
@@ -392,7 +420,7 @@ export function updateRADARSources() {
 }
 
 export function initMap() {
-        olmap = new Map({
+    olmap = new Map({
         target: 'map',
         view: new View({
             enableRotation: false,
@@ -422,42 +450,51 @@ export function initMap() {
         offset: [0, -5],
     });
     olmap.addOverlay(popup);
-    /**
-        const layerSwitcher = new ol.control.LayerSwitcher();
-        olmap.addControl(layerSwitcher);
-        */
+    const layerSwitcher = new LayerSwitcher();
+    olmap.addControl(layerSwitcher);
+
+    // Add click handler for popup closer
+    const popupCloser = document.getElementById('popup-closer');
+    if (popupCloser) {
+        popupCloser.onclick = function() {
+            element.style.display = 'none';
+            const popupContent = document.getElementById('popup-content');
+            if (popupContent) {
+                popupContent.innerHTML = '';
+            }
+            return false;
+        };
+    }
 
     olmap.on('moveend', () => {
         // Someday, we will hashlink this too
     });
-    // display popup on click
-    // TODO support mobile
     olmap.on('click', (evt) => {
         const feature = olmap.forEachFeatureAtPixel(evt.pixel, (feature2) => {
             return feature2;
         });
         if (feature) {
-            if (feature.get('magnitude') === undefined) {
+            // Check if this is an LSR feature (has 'type' property)
+            if (!feature.get('type')) {
                 return;
             }
+            
             const coordinates = feature.getGeometry().getCoordinates();
             popup.setPosition(coordinates);
             
-            // Create popover content without jQuery
-            element.setAttribute('data-bs-placement', 'top');
-            element.setAttribute('data-bs-html', 'true');
-            element.setAttribute('data-bs-content', lsrFeatureHTML(feature));
-            element.setAttribute('title', '');
-            
-            // Show the popup by making it visible
+            // Set the popup content in the popup-content div
+            const popupContent = document.getElementById('popup-content');
+            if (popupContent) {
+                popupContent.innerHTML = lsrFeatureHTML(feature);
+            }
             element.style.display = 'block';
         } else {
             // Hide the popup
             element.style.display = 'none';
-            element.removeAttribute('data-bs-placement');
-            element.removeAttribute('data-bs-html');
-            element.removeAttribute('data-bs-content');
-            element.removeAttribute('title');
+            const popupContent = document.getElementById('popup-content');
+            if (popupContent) {
+                popupContent.innerHTML = '';
+            }
         }
     });
 

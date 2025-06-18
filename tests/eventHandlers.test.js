@@ -2,6 +2,12 @@
  * Tests for eventHandlers.js module
  */
 
+import { jest } from '@jest/globals';
+
+jest.mock('ol-layerswitcher', () => {
+    return jest.fn().mockImplementation(() => ({}));
+});
+
 import { setupEventHandlers } from '../src/eventHandlers.js';
 
 describe('eventHandlers.js module', () => {
