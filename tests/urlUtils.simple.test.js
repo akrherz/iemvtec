@@ -1,38 +1,7 @@
 /**
  * Simple URL utility tests focused on URL migration patterns
- * These tests don't depend on complex DOM mocking
+ * These tests don't depend on complex DOM mocking and focus on pure URL logic
  */
-
-// Essential DOM mocking to prevent JSDOM initialization errors
-Object.defineProperty(global, 'document', {
-    value: {
-        getElementById: jest.fn(() => null),
-        querySelector: jest.fn(() => ({ click: jest.fn() })),
-        addEventListener: jest.fn(),
-        removeEventListener: jest.fn(),
-        title: ''
-    },
-    writable: true
-});
-
-Object.defineProperty(global, 'window', {
-    value: {
-        location: {
-            origin: 'http://localhost:3000',
-            pathname: '',
-            search: '',
-            href: ''
-        },
-        addEventListener: jest.fn(),
-        removeEventListener: jest.fn()
-    },
-    writable: true
-});
-
-Object.defineProperty(global, 'history', {
-    value: { pushState: jest.fn() },
-    writable: true
-});
 
 describe('URL Utils - Simple Migration Tests', () => {
     

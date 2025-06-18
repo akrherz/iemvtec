@@ -23,6 +23,6 @@ export function createTabHTML(href, dataUpdate, label, isActive = false) {
  * @returns {string} HTML string for the tab pane
  */
 export function createTabPaneHTML(id, content, isActive = false) {
-    const activeClass = isActive ? ' active' : '';
+    const activeClass = isActive ? ' active show' : '';
     return `<div class="tab-pane${activeClass}" id="${id}">${content}</div>`;
 }

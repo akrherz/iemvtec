@@ -77,51 +77,59 @@ const lsrLookup = {
     Z: '/lsr/icons/blizzard.png',
 };
 
-const lsrStyle = new Style({
-    image: new Icon({ src: lsrLookup['9'] }),
-});
+function createLSRStyle() {
+    return new Style({
+        image: new Icon({ src: lsrLookup['9'] }),
+    });
+}
 
-const sbwStyle = [
-    new Style({
-        stroke: new Stroke({
-            color: '#FFF',
-            width: 4.5,
+function createSBWStyle() {
+    return [
+        new Style({
+            stroke: new Stroke({
+                color: '#FFF',
+                width: 4.5,
+            }),
         }),
-    }),
-    new Style({
-        stroke: new Stroke({
-            color: '#319FD3',
-            width: 3,
+        new Style({
+            stroke: new Stroke({
+                color: '#319FD3',
+                width: 3,
+            }),
         }),
-    }),
-];
+    ];
+}
 
-const sbwIntersectionStyle = [
-    new Style({
-        stroke: new Stroke({
-            color: '#551A8B',
-            width: 10,
+function createSBWIntersectionStyle() {
+    return [
+        new Style({
+            stroke: new Stroke({
+                color: '#551A8B',
+                width: 10,
+            }),
         }),
-    }),
-];
+    ];
+}
 
-const textStyle = new Style({
-    image: new Circle({
-        radius: 10,
-        stroke: new Stroke({
-            color: '#fff',
+function createTextStyle() {
+    return new Style({
+        image: new Circle({
+            radius: 10,
+            stroke: new Stroke({
+                color: '#fff',
+            }),
+            fill: new Fill({
+                color: '#3399CC',
+            }),
         }),
-        fill: new Fill({
-            color: '#3399CC',
+        text: new Text({
+            font: 'bold 11px "Open Sans", "Arial Unicode MS", "sans-serif"',
+            fill: new Fill({
+                color: 'white',
+            }),
         }),
-    }),
-    text: new Text({
-        font: 'bold 11px "Open Sans", "Arial Unicode MS", "sans-serif"',
-        fill: new Fill({
-            color: 'white',
-        }),
-    }),
-});
+    });
+}
 
 export function getProductVectorCountyLayer() {
     return productVectorCountyLayer;
@@ -221,7 +229,7 @@ export function buildMap() {
     sbwIntersectionLayer = new Vector({
         // @ts-ignore
         title: 'SBW County Intersection',
-        style: sbwIntersectionStyle,
+        style: createSBWIntersectionStyle(),
         source: new VectorSource({
             format: new GeoJSON(),
         }),
@@ -231,6 +239,7 @@ export function buildMap() {
         // @ts-ignore
         title: 'VTEC Product Polygon',
         style: (feature) => {
+            const sbwStyle = createSBWStyle();
             sbwStyle[1]
                 .getStroke()
                 ?.setColor(sbwLookup[feature.get('phenomena')]);
@@ -246,11 +255,13 @@ export function buildMap() {
         title: 'Local Storm Reports',
         style: (feature) => {
             if (feature.get('type') === 'S' || feature.get('type') === 'R') {
+                const textStyle = createTextStyle();
                 textStyle
                     .getText()
                     ?.setText(feature.get('magnitude').toString());
                 return textStyle;
             }
+            const lsrStyle = createLSRStyle();
             let url = lsrLookup[feature.get('type')];
             if (url) {
                 url = url.replace('{{magnitude}}', feature.get('magnitude'));

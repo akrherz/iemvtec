@@ -78,33 +78,14 @@ global.HTMLInputElement = MockHTMLInputElement;
 
 // Basic DOM mocking for elements that urlUtils needs
 const mockHistoryPushState = jest.fn();
-Object.defineProperty(global, 'history', {
-    value: { pushState: mockHistoryPushState },
-    writable: true
-});
 
-Object.defineProperty(global, 'window', {
-    value: {
-        location: {
-            origin: 'http://localhost:3000',
-            pathname: '',
-            search: '',
-            href: ''
-        }
-    },
-    writable: true
-});
-
-Object.defineProperty(global, 'document', {
-    value: {
-        getElementById: jest.fn(),
-        querySelector: jest.fn(() => ({ click: jest.fn() })),
-        addEventListener: jest.fn(),
-        removeEventListener: jest.fn(),
-        title: ''
-    },
-    writable: true
-});
+// Setup history mock safely
+if (!global.history) {
+    // @ts-ignore
+    global.history = { pushState: mockHistoryPushState };
+} else {
+    global.history.pushState = mockHistoryPushState;
+}
 
 describe('URL Utils - Migration Compatibility Tests', () => {
     beforeEach(() => {
