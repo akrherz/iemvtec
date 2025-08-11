@@ -24,6 +24,30 @@ tr.shown td.details-control {
     min-width: 400px;
 }
 
+/* Override external theme fieldset background inside sidebar card */
+.col-md-3 > .card fieldset {
+    background: transparent !important; /* allow card's white background to show */
+}
+
+/* Ensure legend inside sidebar form inherits background */
+.col-md-3 > .card fieldset legend {
+    background: transparent !important;
+    border: 0;
+    padding: 0 2px;
+}
+
+.visually-hidden {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0 0 0 0) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
+}
+
 /* OpenLayers popup styles */
 .ol-popup {
     position: relative;
@@ -94,4 +118,118 @@ tr.shown td.details-control {
 
 .ol-popup-closer:hover:after {
     color: #000;
+}
+
+/* Button + layout utilities */
+.button-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .5rem;
+    align-items: center;
+}
+.btn-icon {
+    padding: .375rem .5rem;
+    line-height: 1;
+}
+/* Remove default paragraph spacing where we use button bars */
+.button-bar + h3,
+.button-bar + table,
+.button-bar + p { margin-top: .75rem; }
+
+/* ETN group layout */
+#etn-group { display: flex; align-items: center; gap: .5rem; }
+#etn-group label { margin: 0; }
+#etn-group input { max-width: 90px; }
+
+/* Consistent section spacing */
+.section-spacer { margin-top: 1.25rem; }
+
+/* Copy button alignment helper when not floating */
+.actions-end { display: flex; justify-content: flex-end; }
+
+/* Consistent heading spacing inside card bodies */
+.card-body h2, .card-body h3 { margin-top: 1.5rem; }
+.card-body h2:first-of-type, .card-body h3:first-of-type { margin-top: 0; }
+
+/* Tighter spacing when heading follows a button bar */
+.button-bar + h2, .button-bar + h3 { margin-top: 1.25rem; }
+
+/* Refine outline-secondary buttons to be lighter and distinct from primary */
+.btn-outline-secondary {
+    color: #495057;
+    border-color: #adb5bd;
+}
+.btn-outline-secondary:hover, .btn-outline-secondary:focus {
+    color: #212529;
+    background-color: #e9ecef;
+    border-color: #868e96;
+}
+.btn-outline-secondary:active, .btn-outline-secondary.active {
+    background-color: #dee2e6;
+    border-color: #868e96;
+    color: #212529;
+}
+
+/* Branded legend styling */
+.brand-legend {
+    font-size: 1.05rem;
+    font-weight: 600;
+    letter-spacing: .25px;
+    padding: 0 0 .35rem 0;
+    margin: 0 0 .85rem 0;
+    display: inline-flex;
+    align-items: center;
+    gap: .45rem;
+    color: #0d6efd;
+    position: relative;
+    background: transparent;
+}
+.brand-legend::after {
+    content: '';
+    position: absolute;
+    left: 0; bottom: 0;
+    height: 3px;
+    width: 100%;
+    background: linear-gradient(90deg,#0d6efd,#6ea8fe);
+    border-radius: 2px;
+}
+@media (prefers-color-scheme: dark) {
+    .brand-legend { color: #66b2ff; }
+    .brand-legend::after { background: linear-gradient(90deg,#339af0,#99caff); }
+}
+
+/* High-contrast focus indicator for keyboard users */
+:focus-visible {
+    outline: 2px solid #0d6efd;
+    outline-offset: 2px;
+}
+
+/* Avoid double focus ring on buttons inside button bars */
+.button-bar .btn:focus { box-shadow: none; }
+
+/* Smooth interactive transitions for buttons */
+.btn, .button-bar .btn {
+    transition: background-color .15s ease, color .15s ease, border-color .15s ease, box-shadow .15s ease;
+}
+
+/* Compact mode for small viewports */
+@media (max-width: 576px) {
+    .button-bar { gap: .4rem; }
+    #etn-group { gap: .4rem; }
+    .card-body h2, .card-body h3 { margin-top: 1.25rem; }
+    .mb-3 { margin-bottom: .85rem !important; }
+    .btn-icon { padding: .3125rem .45rem; }
+}
+
+/* Dark mode adjustments */
+@media (prefers-color-scheme: dark) {
+    body { color: #dee2e6; }
+    .card, .card-body { background-color: #1f2225; }
+    .btn-outline-secondary { color: #ced4da; border-color: #495057; }
+    .btn-outline-secondary:hover, .btn-outline-secondary:focus { background-color: #343a40; border-color: #6c757d; color: #f8f9fa; }
+    .btn-outline-secondary:active, .btn-outline-secondary.active { background-color: #495057; border-color: #6c757d; }
+    :focus-visible { outline: 2px solid #66b2ff; }
+    .ol-popup { background-color: #2b3035; border-color: #495057; }
+    .ol-popup:after { border-top-color: #2b3035; }
+    .ol-popup:before { border-top-color: #495057; }
 }

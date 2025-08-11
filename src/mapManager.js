@@ -20,6 +20,22 @@ let lsrLayer = null;
 let radarTMSLayer = null;
 let radartimes = [];
 let element = null;
+let lastFocus = null;
+
+function announceStatus(msg) {
+    const el = document.getElementById('map-status');
+    const pref = document.getElementById('a11y-live');
+    if (el && (!pref || (pref instanceof HTMLInputElement && pref.checked))) {
+        el.textContent = msg;
+    }
+}
+let radarAnnounceTimer = null;
+function announceRadar(msg){
+    if (radarAnnounceTimer){
+        clearTimeout(radarAnnounceTimer);
+    }
+    radarAnnounceTimer = setTimeout(()=> announceStatus(msg), 150);
+}
 
 export function getLSRLayer() {
     return lsrLayer;
@@ -185,6 +201,11 @@ export function getRADARSource(timeIndex = 0) {
 export function updateRadarDisplay(timeIndex)  {
     const layer = getRadarTMSLayer();
     layer.setSource(getRADARSource(timeIndex));
+    const times = getRadarTimes();
+    const dt = times && times[timeIndex];
+    if (dt) {
+        announceRadar(`Radar updated to ${dt.utc().format('YYYY-MM-DD HH:mm')} UTC`);
+    }
 }
 
 function make_iem_tms(title, layername, visible, type) {
@@ -384,6 +405,7 @@ export function updateRADARProducts() {
             }
             // step3
             updateRADARTimeSlider();
+            announceStatus('Radar products list updated');
         });
 }
 
@@ -418,6 +440,7 @@ export function updateRADARSources() {
             }
             // step2
             updateRADARProducts();
+            announceStatus('Radar sources list updated');
         });
 }
 
@@ -464,9 +487,20 @@ export function initMap() {
             if (popupContent) {
                 popupContent.innerHTML = '';
             }
+            if (lastFocus && document.contains(lastFocus)) {
+                lastFocus.focus();
+            }
+            lastFocus = null;
             return false;
         };
     }
+
+    document.addEventListener('keydown', (ev) => {
+        if (ev.key === 'Escape' && element && element.style.display === 'block') {
+            const closer = document.getElementById('popup-closer');
+            closer?.click();
+        }
+    });
 
     olmap.on('moveend', () => {
         // Someday, we will hashlink this too
@@ -475,7 +509,7 @@ export function initMap() {
         const feature = olmap.forEachFeatureAtPixel(evt.pixel, (feature2) => {
             return feature2;
         });
-        if (feature) {
+    if (feature) {
             // Check if this is an LSR feature (has 'type' property)
             if (!feature.get('type')) {
                 return;
@@ -487,16 +521,29 @@ export function initMap() {
             // Set the popup content in the popup-content div
             const popupContent = document.getElementById('popup-content');
             if (popupContent) {
-                popupContent.innerHTML = lsrFeatureHTML(feature);
+                const html = lsrFeatureHTML(feature);
+                // Ensure there is a heading with id for aria-labelledby
+                popupContent.innerHTML = html.replace('<h5','<h5 id="lsr-popup-title"');
+                element.setAttribute('aria-labelledby', 'lsr-popup-title');
             }
             element.style.display = 'block';
+            // Move focus for screen readers
+            const heading = document.getElementById('lsr-popup-title');
+            if (heading) {
+                heading.setAttribute('tabindex','-1');
+                lastFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+                heading.focus();
+            }
+            announceStatus('Opened storm report popup');
         } else {
             // Hide the popup
             element.style.display = 'none';
+            element.removeAttribute('aria-labelledby');
             const popupContent = document.getElementById('popup-content');
             if (popupContent) {
                 popupContent.innerHTML = '';
             }
+            announceStatus('Closed storm report popup');
         }
     });
 

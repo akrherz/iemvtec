@@ -67,6 +67,10 @@ export function loadVTECGeometry(lsrTable, sbwLsrTable) {
                 lsrTable.row.add(prop);
             });
             lsrTable.draw();
+            const status = document.getElementById('map-status');
+            if (status) {
+                status.textContent = `Loaded ${geodata.features.length} local storm reports.`;
+            }
         })
         .catch(error => {
             console.error('Error fetching LSR data:', error);
@@ -82,6 +86,10 @@ export function loadVTECGeometry(lsrTable, sbwLsrTable) {
                 sbwLsrTable.row.add(prop);
             });
             sbwLsrTable.draw();
+            const status = document.getElementById('map-status');
+            if (status) {
+                status.textContent = `Loaded ${geodata.features.length} storm reports within product polygon.`;
+            }
         })
         .catch(error => {
             console.error('Error fetching SBW LSR data:', error);
