@@ -42,9 +42,8 @@ export function initEventTable() {
  * @param {Object} d - The original data object for the row
  * @returns {string} HTML string for the remark display
  */
-function remarkformat(d) {
-    console.log(d);
-    return `<div style="margin-left: 10px;">` +
+function remarkformat(d, idx) {
+    return `<div id="lsr-detail-panel-${idx}" role="region" aria-label="Report details" style="margin-left: 10px;">` +
         '<strong>NWS Product:</strong>' +
         `<a target="_new" href="/p.php?pid=${d.product_id}">LSR Link</a> ` +
         `<strong>Remark:</strong> ${d.remark}</div>`;
@@ -64,10 +63,12 @@ function makeLSRTable(div) {
                 orderable: false,
                 data: null,
                 defaultContent: '',
-                render: () => {
-                    return '<i class="bi bi-plus-square" aria-hidden="true"></i>';
+                render: (_data, _type, _row, meta) => {
+                    const id = `lsr-detail-btn-${meta.row}`;
+                    const panelId = `lsr-detail-panel-${meta.row}`;
+                    return `<button type="button" id="${id}" class="btn btn-sm p-0 details-toggle" aria-expanded="false" aria-controls="${panelId}" aria-label="Show report details"><i class="bi bi-plus-square" aria-hidden="true"></i><span class="visually-hidden">Toggle details</span></button>`;
                 },
-                width: '15px',
+                width: '28px',
             },
             { data: 'utc_valid' },
             { data: 'event' },
@@ -85,22 +86,22 @@ function makeLSRTable(div) {
         if (!(target instanceof HTMLElement)) {
             return;
         }
-        
-        const td = target.closest('td.details-control');
-        if (!td) {
+        // Allow button or its icon child
+        const btn = target.closest('button.details-toggle');
+        if (!btn) {
             return;
         }
-        
-        const tr = td.closest('tr');
+    const tr = btn.closest('tr');
         if (!tr) {
             return;
         }
-         const icon = tr.querySelector('i.bi');
+        const icon = btn.querySelector('i.bi');
         if (!icon) {
             return;
         }
 
-        const row = table.row(tr);
+    const row = table.row(tr);
+    const rowIdx = row.index();
 
         if (row.child.isShown()) {
             // This row is already open - close it
@@ -108,12 +109,24 @@ function makeLSRTable(div) {
             tr.classList.remove('shown');
             icon.classList.remove('bi-dash-square');
             icon.classList.add('bi-plus-square');
+            btn.setAttribute('aria-expanded', 'false');
+            btn.setAttribute('aria-label', 'Show report details');
+            const status = document.getElementById('map-status');
+            if (status) {
+                status.textContent = 'Collapsed report details';
+            }
         } else {
             // Open this row
-            row.child(remarkformat(row.data())).show();
+            row.child(remarkformat(row.data(), rowIdx)).show();
             tr.classList.add('shown');
             icon.classList.remove('bi-plus-square');
             icon.classList.add('bi-dash-square');
+            btn.setAttribute('aria-expanded', 'true');
+            btn.setAttribute('aria-label', 'Hide report details');
+            const status = document.getElementById('map-status');
+            if (status) {
+                status.textContent = 'Expanded report details';
+            }
         }
     });
 

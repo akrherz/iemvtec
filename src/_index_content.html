@@ -5,8 +5,8 @@
     <div class="card">
       <div class="card-body">
 <form name="control" id="myform">
-
-<p><strong>Find VTEC Product:</strong></p>
+<fieldset>
+<legend class="h6">Find VTEC Product</legend>
 
 <div class="mb-3">
 <label for="wfo" class="form-label">Select Forecast Office</label>
@@ -38,10 +38,10 @@
 </div>
 
 <p>
-<button type="button" id="myform-submit" class="btn btn-primary">
-<i class="bi bi-search"></i> Load Product</button>
+<button type="button" id="myform-submit" class="btn btn-primary" aria-label="Load product by selected office, phenomena, significance, event number and year">
+<i class="bi bi-search" aria-hidden="true"></i> <span>Load Product</span></button>
 </p>
-
+ </fieldset>
 </form>
       </div><!-- ./card-body -->
     </div><!-- ./card -->
@@ -186,14 +186,21 @@ the tab to show the information.</i>
   </div>
 </div>
 
-<div id="map"></div>
-<div id="popup" class="ol-popup">
-    <a href="#" id="popup-closer" class="ol-popup-closer"></a>
-    <div id="popup-content"></div>
+<div id="map" role="region" aria-label="Interactive map showing storm reports and polygons"></div>
+<div id="map-status" class="visually-hidden" aria-live="polite"></div>
+<div class="form-check mt-2 mb-3">
+  <input class="form-check-input" type="checkbox" id="a11y-live" checked>
+  <label class="form-check-label" for="a11y-live">Enable live announcements</label>
+</div>
+<div id="popup" class="ol-popup" role="dialog" aria-modal="false" aria-labelledby="lsr-popup-title">
+  <button type="button" id="popup-closer" class="ol-popup-closer" aria-label="Close popup"></button>
+  <div id="popup-content">
+    <!-- Dynamic content will inject a heading with id lsr-popup-title -->
+  </div>
 </div>
        </div>
-       <div class="tab-pane" id="stormreports">
-       <p><h3>All Storm Reports within Event Political Coverage</h3></p>
+  <div class="tab-pane" id="stormreports" role="tabpanel" aria-labelledby="stormreports-tab">
+  <h3>All Storm Reports within Event Political Coverage</h3>
 
 <div class="float-end">
     <button class="btn btn-primary"
@@ -203,7 +210,8 @@ the tab to show the information.</i>
 </div>
 
 
-<table id="lsrtable" style="width: 100%">
+<table id="lsrtable" style="width: 100%" aria-describedby="lsrtable-caption">
+<caption id="lsrtable-caption">Local Storm Reports within the event political coverage. Use the first column to expand each report for details.</caption>
 <thead>
 <tr>
  <th></th>
@@ -219,7 +227,7 @@ the tab to show the information.</i>
 </tbody>
 </table>
 
-<p><h3>Storm Reports within Product Polygon</h3></p>
+<h3>Storm Reports within Product Polygon</h3>
 
 <div class="float-end">
     <button class="btn btn-primary"
@@ -229,7 +237,8 @@ the tab to show the information.</i>
 </div>
 
 
-<table id="sbwlsrtable" style="width: 100%">
+<table id="sbwlsrtable" style="width: 100%" aria-describedby="sbwlsrtable-caption">
+<caption id="sbwlsrtable-caption">Local Storm Reports constrained to the active product polygon.</caption>
 <thead>
 <tr>
  <th></th>
@@ -257,7 +266,8 @@ selected year.  Click on the row to select that event.</p>
     </button>
 </div>
 
-<table id="eventtable" style="width:100%">
+<table id="eventtable" style="width:100%" aria-describedby="eventtable-caption">
+<caption id="eventtable-caption">Other events issued by the selected office for the chosen year.</caption>
 <thead>
 <tr>
  <th>ID</th>
@@ -265,7 +275,7 @@ selected year.  Click on the row to select that event.</p>
  <th>VTEC Issued</th>
  <th>Initial Expire</th>
  <th>VTEC Expire</th>
- <th>Area km**2</th>
+ <th>Area km<span aria-hidden="true">²</span><span class="visually-hidden"> squared</span></th>
  <th>Locations</th>
  <th>Signature</th>
 </tr>
