@@ -193,10 +193,6 @@ tr.shown td.details-control {
     background: linear-gradient(90deg,#0d6efd,#6ea8fe);
     border-radius: 2px;
 }
-@media (prefers-color-scheme: dark) {
-    .brand-legend { color: #66b2ff; }
-    .brand-legend::after { background: linear-gradient(90deg,#339af0,#99caff); }
-}
 
 /* High-contrast focus indicator for keyboard users */
 :focus-visible {
@@ -219,17 +215,4 @@ tr.shown td.details-control {
     .card-body h2, .card-body h3 { margin-top: 1.25rem; }
     .mb-3 { margin-bottom: .85rem !important; }
     .btn-icon { padding: .3125rem .45rem; }
-}
-
-/* Dark mode adjustments */
-@media (prefers-color-scheme: dark) {
-    body { color: #dee2e6; }
-    .card, .card-body { background-color: #1f2225; }
-    .btn-outline-secondary { color: #ced4da; border-color: #495057; }
-    .btn-outline-secondary:hover, .btn-outline-secondary:focus { background-color: #343a40; border-color: #6c757d; color: #f8f9fa; }
-    .btn-outline-secondary:active, .btn-outline-secondary.active { background-color: #495057; border-color: #6c757d; }
-    :focus-visible { outline: 2px solid #66b2ff; }
-    .ol-popup { background-color: #2b3035; border-color: #495057; }
-    .ol-popup:after { border-top-color: #2b3035; }
-    .ol-popup:before { border-top-color: #495057; }
 }
