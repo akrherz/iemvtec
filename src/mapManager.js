@@ -471,7 +471,7 @@ export function initMap() {
     const popup = new Overlay({
         element,
         positioning: 'bottom-center',
-        stopEvent: false,
+        stopEvent: true,
         offset: [0, -5],
     });
     olmap.addOverlay(popup);
