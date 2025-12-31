@@ -87,30 +87,39 @@ async function initializeApp() {
 
     initMap();
     
-    // Enable Tom Select for WFO select
-    new TomSelect('#wfo', {
-        create: false,
-        sortField: 'text',
-        allowEmptyOption: false,
-        maxOptions: 100,
-        placeholder: 'Type to search...'
-    });
-    // Enable Tom Select for Phenomena select
-    new TomSelect('#phenomena', {
-        create: false,
-        sortField: 'text',
-        allowEmptyOption: false,
-        maxOptions: 100,
-        placeholder: 'Type to search...'
-    });
-    // Enable Tom Select for Significance select
-    new TomSelect('#significance', {
-        create: false,
-        sortField: 'text',
-        allowEmptyOption: false,
-        maxOptions: 100,
-        placeholder: 'Type to search...'
-    });
+    // Enable Tom Select for WFO select if present
+    const wfoEl = document.getElementById('wfo');
+    if (wfoEl) {
+        new TomSelect('#wfo', {
+            create: false,
+            sortField: 'text',
+            allowEmptyOption: false,
+            maxOptions: 100,
+            placeholder: 'Type to search...'
+        });
+    }
+    // Enable Tom Select for Phenomena select if present
+    const phenEl = document.getElementById('phenomena');
+    if (phenEl) {
+        new TomSelect('#phenomena', {
+            create: false,
+            sortField: 'text',
+            allowEmptyOption: false,
+            maxOptions: 100,
+            placeholder: 'Type to search...'
+        });
+    }
+    // Enable Tom Select for Significance select if present
+    const sigEl = document.getElementById('significance');
+    if (sigEl) {
+        new TomSelect('#significance', {
+            create: false,
+            sortField: 'text',
+            allowEmptyOption: false,
+            maxOptions: 100,
+            placeholder: 'Type to search...'
+        });
+    }
 }
 
 /**
