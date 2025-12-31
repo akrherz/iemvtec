@@ -4,6 +4,7 @@ import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap/dist/js/bootstrap.bundle.js';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import 'datatables.net-dt/css/dataTables.dataTables.css';
+import 'tom-select/dist/css/tom-select.bootstrap5.css';
 
 import { buildMap, initMap } from './mapManager.js';
 import { initLSRTables, initEventTable, getEventTable } from './tableUtils.js';
@@ -12,6 +13,7 @@ import { setupEventHandlers } from './eventHandlers.js';
 import { initializeForm } from './formInit.js';
 import { makeUGCTable } from './ugcTable.js';
 import { initializeUI } from './uiManager.js';
+import TomSelect from 'tom-select/dist/js/tom-select.complete.js';
 
 /**
  * Check if essential DOM elements are available
@@ -85,6 +87,30 @@ async function initializeApp() {
 
     initMap();
     
+    // Enable Tom Select for WFO select
+    new TomSelect('#wfo', {
+        create: false,
+        sortField: 'text',
+        allowEmptyOption: false,
+        maxOptions: 100,
+        placeholder: 'Type to search...'
+    });
+    // Enable Tom Select for Phenomena select
+    new TomSelect('#phenomena', {
+        create: false,
+        sortField: 'text',
+        allowEmptyOption: false,
+        maxOptions: 100,
+        placeholder: 'Type to search...'
+    });
+    // Enable Tom Select for Significance select
+    new TomSelect('#significance', {
+        create: false,
+        sortField: 'text',
+        allowEmptyOption: false,
+        maxOptions: 100,
+        placeholder: 'Type to search...'
+    });
 }
 
 /**
