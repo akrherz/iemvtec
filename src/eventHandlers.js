@@ -234,6 +234,7 @@ export function setupEventTableHandler(eventTable) {
                 return;
             }
             setETN(data.id);
+            loadTabs();
             // Switch to the details tab, which will trigger update
             const infoTab = document.querySelector("#thetabs_tabs a[href='#info']");
             if (infoTab instanceof HTMLElement) {
