@@ -25,13 +25,9 @@ export function buildSelectOptions(data, template = '<option value="{value}">{te
 export function populateSelect(selectId, data, defaultValue, template = '<option value="{value}">{text}</option>') {
     const selectElement = requireSelectElement(selectId);
     const options = buildSelectOptions(data, template);
-    selectElement.innerHTML += options;
-    
+    selectElement.innerHTML = options;
     if (defaultValue) {
-        const defaultOption = selectElement.querySelector(`option[value='${defaultValue}']`);
-        if (defaultOption instanceof HTMLOptionElement) {
-            defaultOption.selected = true;
-        }
+        selectElement.value = defaultValue;
     }
 }
 

@@ -14,7 +14,7 @@ import { buildSelectOptions, populateSelect } from './selectUtils.js';
 export function initializeWFOSelect() {
     const wfoSelect = requireSelectElement('wfo');
     const options = buildSelectOptions(wfos, '<option value="{value}">[{value}] {text}</option>');
-    wfoSelect.innerHTML += options;
+    wfoSelect.innerHTML = options;
     wfoSelect.value = 'KDMX';
 }
 
