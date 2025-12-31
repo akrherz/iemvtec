@@ -9,18 +9,21 @@
 <legend class="h6 brand-legend"><span>IEM VTEC Browser</span></legend>
 
 <div class="mb-3">
-<label for="wfo" class="form-label">Select Forecast Office</label>
-<select name="wfo" id="wfo"></select>
+<label for="wfo" class="form-label" id="wfo-label">Select Forecast Office</label>
+<select name="wfo" id="wfo" aria-labelledby="wfo-label" aria-describedby="wfo-desc"></select>
+<div id="wfo-desc" class="visually-hidden">Choose a National Weather Service Forecast Office. Type to search.</div>
 </div>
 
 <div class="mb-3">
-<label for="phenomena" class="form-label">Phenomena</label>
-<select name="phenomena" id="phenomena" class="form-select"></select>
+<label for="phenomena" class="form-label" id="phenomena-label">Phenomena</label>
+<select name="phenomena" id="phenomena" class="form-select" aria-labelledby="phenomena-label" aria-describedby="phenomena-desc"></select>
+<div id="phenomena-desc" class="visually-hidden">Select the weather event type. Type to search.</div>
 </div>
 
 <div class="mb-3">
-<label for="significance" class="form-label">Significance</label>
-<select name="significance" id="significance" class="form-select"></select>
+<label for="significance" class="form-label" id="significance-label">Significance</label>
+<select name="significance" id="significance" class="form-select" aria-labelledby="significance-label" aria-describedby="significance-desc"></select>
+<div id="significance-desc" class="visually-hidden">Select the event significance. Type to search.</div>
 </div>
 
 <div class="mb-3" id="etn-group">
@@ -40,8 +43,10 @@
 </div>
 
 <div class="button-bar mb-3">
-  <button type="button" id="myform-submit" class="btn btn-primary" aria-label="Load product by selected office, phenomena, significance, event number and year">
+  <button type="button" id="myform-submit" class="btn btn-primary" aria-label="Load product by selected office, phenomena, significance, event number and year" aria-describedby="load-desc">
     <i class="bi bi-search" aria-hidden="true"></i> <span>Load Product</span>
+  </button>
+  <div id="load-desc" class="visually-hidden">Loads the product for the selected criteria. Press Enter or Space to activate.</div>
   </button>
 </div>
  </fieldset>
