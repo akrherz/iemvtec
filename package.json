@@ -2,6 +2,7 @@
   "name": "iemvtec",
   "version": "1.0.0",
   "description": "VTEC App - Bootstrap 5 for modern compatibility",
+  "type": "module",
   "scripts": {
     "start": "vite",
     "build": "npm run build:assets && npm run build:content",
