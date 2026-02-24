@@ -23,6 +23,7 @@ describe('Table Utils - Real DOM with Real Functions', () => {
                         <td>1.00</td>
                         <td>Test City</td>
                         <td>Test County</td>
+                        <td>Test Remark</td>
                     </tr>
                 </tbody>
             </table>

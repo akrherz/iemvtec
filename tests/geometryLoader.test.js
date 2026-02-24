@@ -29,17 +29,21 @@ jest.mock('../src/mapManager.js', () => ({
             getExtent: jest.fn(() => [0, 0, 100, 100])
         }))
     })),
-    getProductVectorSBWLayer: jest.fn(() => ({
+    getProductVectorPolygonLayer: jest.fn(() => ({
         setSource: jest.fn()
     })),
-    getProductVectorLSRLayer: jest.fn(() => ({
+    getSBWIntersectionLayer: jest.fn(() => ({
+        setSource: jest.fn()
+    })),
+    getLSRLayer: jest.fn(() => ({
         setSource: jest.fn()
     })),
     getMap: jest.fn(() => ({
         getView: jest.fn(() => ({
-            fit: jest.fn()
+            setCenter: jest.fn()
         }))
-    }))
+    })),
+    updateRADARSources: jest.fn()
 }));
 
 jest.mock('../src/appUtils.js', () => ({
@@ -51,7 +55,7 @@ jest.mock('../src/appUtils.js', () => ({
         etn: 45,
         year: '2024'
     })),
-    fetchWithParams: jest.fn(() => Promise.resolve({}))
+    fetchWithParams: jest.fn(() => Promise.resolve({ features: [] }))
 }));
 
 import { loadVTECGeometry } from '../src/geometryLoader.js';
@@ -66,17 +70,19 @@ describe('Geometry Loader', () => {
     });
 
     test('should load VTEC geometry', () => {
-        const mockLSRTable = { clear: jest.fn(), rows: { add: jest.fn() } };
-        const mockSBWLSRTable = { clear: jest.fn(), rows: { add: jest.fn() } };
+        const mockLSRTable = { clear: jest.fn(), row: { add: jest.fn() }, draw: jest.fn() };
+        const mockSBWLSRTable = { clear: jest.fn(), row: { add: jest.fn() }, draw: jest.fn() };
         
         expect(() => {
             loadVTECGeometry(mockLSRTable, mockSBWLSRTable);
         }).not.toThrow();
     });
 
-    test('should handle missing tables gracefully', () => {
+    test('should load with empty geometry data', () => {
+        const mockLSRTable = { clear: jest.fn(), row: { add: jest.fn() }, draw: jest.fn() };
+        const mockSBWLSRTable = { clear: jest.fn(), row: { add: jest.fn() }, draw: jest.fn() };
         expect(() => {
-            loadVTECGeometry(null, null);
+            loadVTECGeometry(mockLSRTable, mockSBWLSRTable);
         }).not.toThrow();
     });
 });

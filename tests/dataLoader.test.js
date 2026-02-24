@@ -22,13 +22,29 @@ jest.mock('iemjs/domUtils', () => ({
 jest.mock('../src/tableUtils.js', () => ({
     initLSRTables: jest.fn(),
     initEventTable: jest.fn(),
-    getEventTable: jest.fn(() => null),
-    getLSRTable: jest.fn(() => null),
-    getSBWLSRTable: jest.fn(() => null)
+    getEventTable: jest.fn(() => ({
+        clear: jest.fn(),
+        row: { add: jest.fn() },
+        draw: jest.fn()
+    })),
+    getLSRTable: jest.fn(() => ({
+        clear: jest.fn(),
+        row: { add: jest.fn() },
+        draw: jest.fn()
+    })),
+    getSBWLSRTable: jest.fn(() => ({
+        clear: jest.fn(),
+        row: { add: jest.fn() },
+        draw: jest.fn()
+    }))
 }));
 
 jest.mock('../src/ugcTable.js', () => ({
-    getUGCTable: jest.fn(() => null)
+    getUGCTable: jest.fn(() => ({
+        clear: jest.fn(),
+        row: { add: jest.fn() },
+        draw: jest.fn()
+    }))
 }));
 
 jest.mock('../src/tabUtils.js', () => ({
@@ -37,7 +53,25 @@ jest.mock('../src/tabUtils.js', () => ({
 }));
 
 jest.mock('../src/appUtils.js', () => ({
-    fetchWithParams: jest.fn(() => Promise.resolve({})),
+    fetchWithParams: jest.fn((url) => {
+        if (url.includes('vtec_events.py')) {
+            return Promise.resolve({ events: [] });
+        }
+        return Promise.resolve({
+            event_exists: true,
+            report: {
+                valid: '2024-05-21T21:03:00Z',
+                product_id: 'TEST123',
+                text: 'Test VTEC text'
+            },
+            svs: [],
+            ugcs: [],
+            lsrs: [],
+            geo: { type: 'FeatureCollection', features: [] },
+            utc_issue: '2024-05-21T21:03:00Z',
+            utc_expire: '2024-05-21T22:03:00Z'
+        });
+    }),
     getData: jest.fn(() => ({ wfo: 'KDMX', year: '2024' }))
 }));
 
@@ -51,8 +85,11 @@ jest.mock('../src/urlUtils.js', () => ({
 }));
 
 jest.mock('../src/state.js', () => ({
+    setState: jest.fn(),
     getState: jest.fn(),
     StateKeys: {
+        ISSUE: 'issue',
+        EXPIRE: 'expire',
         ACTIVE_UPDATE: 'activeUpdate'
     }
 }));
@@ -74,25 +111,6 @@ import { loadTabs } from '../src/dataLoader.js';
 describe('Data Loader', () => {
     beforeEach(() => {
         jest.clearAllMocks();
-        
-        // Mock fetch
-        // @ts-ignore
-        global.fetch = jest.fn(() =>
-            Promise.resolve({
-                ok: true,
-                json: () => Promise.resolve({
-                    event_exists: true,
-                    report: {
-                        valid: '2024-05-21T21:03:00Z',
-                        product_id: 'TEST123',
-                        text: 'Test VTEC text'
-                    },
-                    svs: [],
-                    lsrs: [],
-                    geo: { type: 'FeatureCollection', features: [] }
-                })
-            })
-        );
     });
 
     afterEach(() => {
@@ -107,14 +125,21 @@ describe('Data Loader', () => {
         expect(() => {
             loadTabs();
         }).not.toThrow();
+        await Promise.resolve();
     });
 
     test('should handle fetch errors gracefully', async () => {
-        // @ts-ignore
-        global.fetch = jest.fn(() => Promise.reject(new Error('Network error')));
-        
-        expect(() => {
-            loadTabs();
-        }).not.toThrow();
+        const { fetchWithParams } = await import('../src/appUtils.js');
+        fetchWithParams.mockImplementationOnce(() => Promise.reject(new Error('Network error')));
+        const originalConsoleError = console.error;
+        console.error = () => {};
+        try {
+            expect(() => {
+                loadTabs();
+            }).not.toThrow();
+            await new Promise((resolve) => setTimeout(resolve, 0));
+        } finally {
+            console.error = originalConsoleError;
+        }
     });
 });
