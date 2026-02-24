@@ -15,8 +15,12 @@ jest.mock('../src/appUtils.js', () => ({
 }));
 
 describe('App (Development Entry Point)', () => {
+    let originalConsoleLog;
+
     beforeEach(() => {
         jest.clearAllMocks();
+        originalConsoleLog = console.log;
+        console.log = () => {};
         
         // Mock fetch for content loading
         // @ts-ignore
@@ -41,6 +45,7 @@ describe('App (Development Entry Point)', () => {
     });
 
     afterEach(() => {
+        console.log = originalConsoleLog;
         jest.restoreAllMocks();
     });
 

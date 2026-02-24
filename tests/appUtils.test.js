@@ -94,7 +94,12 @@ describe('App Utils', () => {
         // @ts-ignore
         global.document.createRange = jest.fn(() => mockRange);
         // @ts-ignore
-        global.document.execCommand = jest.fn();
+        Object.defineProperty(global.navigator, 'clipboard', {
+            configurable: true,
+            value: {
+                writeText: () => Promise.resolve()
+            }
+        });
         
         document.body.appendChild(mockElement);
         

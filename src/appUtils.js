@@ -56,6 +56,7 @@ export function selectElementContents(elid) {
     const el = requireElement(elid);
     let range = null;
     let sel = null;
+    let copiedText = '';
     if (document.createRange && window.getSelection) {
         range = document.createRange();
         sel = window.getSelection();
@@ -68,8 +69,11 @@ export function selectElementContents(elid) {
                 range.selectNode(el);
                 sel.addRange(range);
             }
+            copiedText = sel.toString();
         }
-        document.execCommand('copy');
+    }
+    if (navigator.clipboard?.writeText) {
+        void navigator.clipboard.writeText(copiedText || el.textContent || '');
     }
 }
 

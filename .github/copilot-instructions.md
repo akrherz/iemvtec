@@ -11,7 +11,6 @@ You can abbreviate the rule description to a single word or phrase.
     first and provide a valid reason why a mock is necessary.
 - Do not add code comments detailing what you modified. Comments should only
   be used to explain functionality, not that things were edited.
-- Do not attempt to run node for testing purposes.
 - Do not use Jquery and replace any jQuery code with vanilla JavaScript.
 - Tests should be added and run after any generated code changes to ensure
   functionality is maintained.

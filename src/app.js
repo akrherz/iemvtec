@@ -7,9 +7,7 @@ import { main } from './main.js';
 import { setUpdate, selectElementContents } from './appUtils.js';
 
 // Expose functions globally for HTML onclick handlers
-// @ts-ignore
 window.setUpdate = setUpdate;
-// @ts-ignore
 window.selectElementContents = selectElementContents;
 
 // Simple initialization
@@ -72,5 +70,4 @@ class VTECApp {
     }
 }
 
-// @ts-ignore
 window._app = new VTECApp(); 
