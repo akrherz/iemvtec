@@ -94,7 +94,7 @@ async function initializeApp() {
             create: false,
             sortField: 'text',
             allowEmptyOption: false,
-            maxOptions: 100,
+            maxOptions: 300,
             placeholder: 'Type to search...'
         });
     }
