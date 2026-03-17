@@ -26,6 +26,7 @@ module.exports = [
             "no-var": "error",
             "prefer-const": "error",
             "semi": "error"
+            ,"no-useless-assignment": "error"
         }
     }
 ];

@@ -54,8 +54,8 @@ export function createGeoJSONVectorSource(geodata) {
  */
 export function selectElementContents(elid) {
     const el = requireElement(elid);
-    let range = null;
-    let sel = null;
+    let range;
+    let sel;
     let copiedText = '';
     if (document.createRange && window.getSelection) {
         range = document.createRange();
