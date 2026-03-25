@@ -399,7 +399,16 @@ export function setRadarProductLegendImage(product) {
             parent.insertBefore(img, selectEl.nextSibling);
         }
     }
-    const base = (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.BASE_URL) ? import.meta.env.BASE_URL : '/';
+    let base = '/';
+    try {
+        const getBase = new Function('return import.meta.env.BASE_URL');
+        const maybeBase = getBase();
+        if (typeof maybeBase === 'string' && maybeBase.length > 0) {
+            base = maybeBase;
+        }
+    } catch {
+        // Non-Vite environments, including Jest, should use the root path.
+    }
     const code = String(product || '').trim().toUpperCase();
     img.src = `${base}legends/${code}.png`;
     img.alt = `${code} legend`;
