@@ -4,6 +4,7 @@ import fs from 'fs';
 
 export default defineConfig(({ command }) => ({
   root: 'src',
+  publicDir: resolve(__dirname, 'public'),
   base: command === 'serve' ? '/' : '/vtec/',
   build: {
     outDir: '../dist',

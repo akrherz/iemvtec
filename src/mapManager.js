@@ -380,19 +380,53 @@ export function updateRADARTimeSlider() {
 /**
  * Query radar service for available RADAR products and update the UI
  */
+export function setRadarProductLegendImage(product) {
+    const selectEl = requireSelectElement('radarproduct');
+    if (!selectEl) {
+        return;
+    }
+    let img = document.getElementById('radar-product-legend');
+    if (!img) {
+        img = document.createElement('img');
+        img.id = 'radar-product-legend';
+        img.style.display = 'block';
+        img.style.maxWidth = '280px';
+        img.style.width = '100%';
+        img.style.marginTop = '6px';
+        img.style.border = '1px solid rgba(0,0,0,0.1)';
+        const parent = selectEl.parentNode;
+        if (parent) {
+            parent.insertBefore(img, selectEl.nextSibling);
+        }
+    }
+    let base = '/';
+    try {
+        const getBase = new Function('return import.meta.env.BASE_URL');
+        const maybeBase = getBase();
+        if (typeof maybeBase === 'string' && maybeBase.length > 0) {
+            base = maybeBase;
+        }
+    } catch {
+        // Non-Vite environments, including Jest, should use the root path.
+    }
+    const code = String(product || '').trim().toUpperCase();
+    img.src = `${base}legends/${code}.png`;
+    img.alt = `${code} legend`;
+}
+
 export function updateRADARProducts() {
     const issue = getState(StateKeys.ISSUE);
     if (issue === null) {
         return;
     }
-    
+
     const requestData = {
         radar: requireSelectElement('radarsource').value,
         // @ts-ignore
         start: issue.utc().format(),
         operation: 'products',
     };
-    
+
     fetch('https://mesonet.agron.iastate.edu/json/radar.py?' + new URLSearchParams(requestData))
         .then(response => response.json())
         .then(data => {
@@ -403,6 +437,10 @@ export function updateRADARProducts() {
             } else {
                 setState(StateKeys.RADAR_PRODUCT, escapeHTML(requireSelectElement('radarproduct').value));
             }
+
+            const chosen = requireSelectElement('radarproduct').value;
+            setRadarProductLegendImage(chosen);
+
             // step3
             updateRADARTimeSlider();
             announceStatus('Radar products list updated');

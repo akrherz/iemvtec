@@ -7,7 +7,7 @@ import { requireElement, requireSelectElement, escapeHTML } from 'iemjs/domUtils
 import { setState, StateKeys, subscribeToState } from './state.js';
 import { getETN, setETN } from './vtecFields.js';
 import { updateURL, urlencode } from './urlUtils.js';
-import { updateRADARProducts, updateRADARTimeSlider } from './mapManager.js';
+import { updateRADARProducts, updateRADARTimeSlider, setRadarProductLegendImage } from './mapManager.js';
 import { loadTabs } from './dataLoader.js';
 
 /**
@@ -65,7 +65,7 @@ function createSelectHandler(stateKey, valueExtractor, additionalAction) {
         const value = valueExtractor();
         setState(stateKey, escapeHTML(value));
         if (additionalAction) {
-            additionalAction();
+            additionalAction(value);
         }
         updateURL();
     };
@@ -205,7 +205,10 @@ export function setupSelectHandlers() {
         createSelectHandler(StateKeys.RADAR, () => requireSelectElement('radarsource').value, updateRADARProducts)
     );
     requireSelectElement('radarproduct').addEventListener('change', 
-        createSelectHandler(StateKeys.RADAR_PRODUCT, () => requireSelectElement('radarproduct').value, updateRADARTimeSlider)
+        createSelectHandler(StateKeys.RADAR_PRODUCT, () => requireSelectElement('radarproduct').value, (value) => {
+            setRadarProductLegendImage(value);
+            updateRADARTimeSlider();
+        })
     );
 }
 
