@@ -399,7 +399,7 @@ export function setRadarProductLegendImage(product) {
             parent.insertBefore(img, selectEl.nextSibling);
         }
     }
-    const code = String(product || '').trim().toUpperCase();
+    const code = String(product || '').trim().toUpperCase() || 'N0Q';
     img.src = `legends/${code}.png`;
     img.alt = `${code} legend`;
 }
