@@ -46,6 +46,11 @@ const wfo3to4 = {
     ANC: 'PANC', // Alaska Anchorage
 };
 
+function isValidNumber(value) {
+    const normalized = Number(value);
+    return Number.isFinite(normalized);
+}
+
 /**
  * Generate a commonly used VTEC string in the form of
  * YYYY-O-NEW-WFO-PHENOMENA-SIGNIFICANCE-ETN
@@ -62,7 +67,19 @@ export function vtecString() {
  * @returns {string} The URL encoded string
  */
 export function urlencode() {
-    return `?year=${getYear()}&phenomena=${getPhenomena()}&significance=${getSignificance()}&eventid=${getETN()}&wfo=${getWFO()}`;
+    const params = new URLSearchParams();
+    const year = getYear();
+    const eventid = getETN();
+    if (isValidNumber(year)) {
+        params.set('year', String(year));
+    }
+    params.set('phenomena', getPhenomena());
+    params.set('significance', getSignificance());
+    if (isValidNumber(eventid)) {
+        params.set('eventid', String(eventid));
+    }
+    params.set('wfo', getWFO());
+    return `?${params.toString()}`;
 }
 
 /**
@@ -74,11 +91,17 @@ export function urlencode() {
  */
 export function updateURL(propogate = true) {
     const params = new URLSearchParams();
-    params.set('year', `${getYear()}`);
+    const year = getYear();
+    if (isValidNumber(year)) {
+        params.set('year', String(year));
+    }
     params.set('wfo', getWFO());
     params.set('phenomena', getPhenomena());
     params.set('significance', getSignificance());
-    params.set('eventid', getETN().toString());
+    const eventid = getETN();
+    if (isValidNumber(eventid)) {
+        params.set('eventid', String(eventid));
+    }
     
     const activeTab = getState(StateKeys.ACTIVE_TAB);
     if (activeTab) {
