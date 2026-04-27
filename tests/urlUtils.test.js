@@ -87,6 +87,9 @@ if (!global.history) {
     global.history.pushState = mockHistoryPushState;
 }
 
+const mockVtecFields = jest.requireMock('../src/vtecFields.js');
+const mockState = jest.requireMock('../src/state.js');
+
 describe('URL Utils - Migration Compatibility Tests', () => {
     beforeEach(() => {
         jest.resetModules();
@@ -109,6 +112,28 @@ describe('URL Utils - Migration Compatibility Tests', () => {
         const urlUtils = require('../src/urlUtils.js');
         const result = urlUtils.urlencode();
         expect(result).toBe('?year=2024&phenomena=TO&significance=W&eventid=45&wfo=KDMX');
+    });
+
+    test('should omit invalid year and eventid from generated URLs', () => {
+        const urlUtils = require('../src/urlUtils.js');
+        const vtecFields = require('../src/vtecFields.js');
+        const state = require('../src/state.js');
+
+        vtecFields.getYear.mockReturnValue(Number.NaN);
+        vtecFields.getETN.mockReturnValue(Number.NaN);
+        state.getState.mockReturnValue(null);
+
+        expect(urlUtils.urlencode()).toBe('?phenomena=TO&significance=W&wfo=KDMX');
+
+        urlUtils.updateURL(false);
+        expect(mockHistoryPushState).toHaveBeenCalledWith(
+            null,
+            '',
+            '?wfo=KDMX&phenomena=TO&significance=W'
+        );
+
+        vtecFields.getYear.mockReturnValue('2024');
+        vtecFields.getETN.mockReturnValue(45);
     });
 
     test('should pad ETN correctly in VTEC string', () => {

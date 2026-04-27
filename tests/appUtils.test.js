@@ -43,6 +43,8 @@ jest.mock('../src/state.js', () => ({
 
 import { setUpdate, fetchWithParams, createGeoJSONVectorSource, selectElementContents, getData } from '../src/appUtils.js';
 
+const mockVtecFields = jest.requireMock('../src/vtecFields.js');
+
 describe('App Utils', () => {
     beforeEach(() => {
         jest.clearAllMocks();
@@ -113,5 +115,34 @@ describe('App Utils', () => {
         // This function requires complex OpenLayers mocking
         // For now, just test that the function exists
         expect(typeof createGeoJSONVectorSource).toBe('function');
+    });
+
+    test('should omit nullish and NaN query values in fetchWithParams', async () => {
+        global.fetch = jest.fn(() =>
+            Promise.resolve({
+                json: () => Promise.resolve({ ok: true })
+            })
+        );
+
+        await fetchWithParams('https://example.com/service', {
+            wfo: 'KDMX',
+            etn: Number.NaN,
+            year: undefined,
+            significance: null,
+            phenomena: 'TO'
+        });
+
+        expect(global.fetch).toHaveBeenCalledWith(
+            'https://example.com/service?wfo=KDMX&phenomena=TO'
+        );
+    });
+
+    test('should still expose raw NaN values in getData for current field state', () => {
+        mockVtecFields.getETN.mockReturnValueOnce(Number.NaN);
+        mockVtecFields.getYear.mockReturnValueOnce(Number.NaN);
+
+        const data = getData();
+        expect(Number.isNaN(data.etn)).toBe(true);
+        expect(Number.isNaN(data.year)).toBe(true);
     });
 });

@@ -27,7 +27,14 @@ export function setUpdate(val) {
 export function fetchWithParams(url, payload) {
     const params = new URLSearchParams();
     Object.keys(payload).forEach(key => {
-        params.append(key, String(payload[key]));
+        const value = payload[key];
+        if (value === null || value === undefined) {
+            return;
+        }
+        if (typeof value === 'number' && Number.isNaN(value)) {
+            return;
+        }
+        params.append(key, String(value));
     });
     return fetch(`${url}?${params.toString()}`)
         .then(response => response.json());
