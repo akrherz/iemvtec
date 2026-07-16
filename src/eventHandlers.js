@@ -48,7 +48,8 @@ function createButtonHandler(action) {
  */
 function createRedirectHandler(urlGenerator) {
     return function() {
-        window.location.href = urlGenerator();
+        const targetUrl = urlGenerator();
+        window.open(targetUrl, '_blank', 'noopener,noreferrer');
         /** @type {HTMLElement} */ (this).blur();
     };
 }
