@@ -21,7 +21,7 @@ describe('App (Development Entry Point)', () => {
         jest.clearAllMocks();
         originalConsoleLog = console.log;
         console.log = () => {};
-        
+
         // Mock fetch for content loading
         // @ts-ignore
         global.fetch = jest.fn(() =>
@@ -30,7 +30,7 @@ describe('App (Development Entry Point)', () => {
                 text: () => Promise.resolve('<div>Mock content</div>')
             })
         );
-        
+
         // Mock DOM elements
         // @ts-ignore
         document.getElementById = jest.fn((id) => {
@@ -39,7 +39,7 @@ describe('App (Development Entry Point)', () => {
             }
             return null;
         });
-        
+
         // Import app to trigger global assignments
         require('../src/app.js');
     });

@@ -11,7 +11,7 @@ describe('formInit.js module', () => {
 
     test('should export expected functions', () => {
         const formInit = require('../src/formInit.js');
-        
+
         expect(typeof formInit.initializeWFOSelect).toBe('function');
         expect(typeof formInit.initializePhenomenaSelect).toBe('function');
         expect(typeof formInit.initializeSignificanceSelect).toBe('function');

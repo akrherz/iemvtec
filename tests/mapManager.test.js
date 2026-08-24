@@ -82,18 +82,18 @@ jest.mock('ol/source', () => {
         this.options = options;
         return this;
     };
-    
+
     const MockVector = function() {
         this.clear = jest.fn();
         this.addFeatures = jest.fn();
         this.getFeatures = jest.fn(() => []);
         return this;
     };
-    
+
     const MockOSM = function() {
         return this;
     };
-    
+
     return {
         OSM: MockOSM,
         XYZ: MockXYZ,
@@ -124,7 +124,7 @@ jest.mock('ol-layerswitcher', () => {
 
 // Mock other dependencies
 jest.mock('iemjs/domUtils', () => ({
-    requireElement: jest.fn(() => ({ 
+    requireElement: jest.fn(() => ({
         id: 'mock-map',
         style: {}
     })),

@@ -20,14 +20,14 @@ export class VanillaSlider {
         };
 
         const config = { ...defaults, ...options };
-        
+
         // Create slider HTML structure
         container.innerHTML = `
             <div class="vanilla-slider-track">
                 <div class="vanilla-slider-fill"></div>
-                <div class="vanilla-slider-thumb" tabindex="0" role="slider" 
-                     aria-valuemin="${config.min}" 
-                     aria-valuemax="${config.max}" 
+                <div class="vanilla-slider-thumb" tabindex="0" role="slider"
+                     aria-valuemin="${config.min}"
+                     aria-valuemax="${config.max}"
                      aria-valuenow="${config.value}"></div>
             </div>
         `;
@@ -92,7 +92,7 @@ export class VanillaSlider {
      */
     setOption(option, value) {
         this.sliderData.config[option] = value;
-        
+
         if (option === 'min' || option === 'max') {
             this.sliderData.thumb?.setAttribute(`aria-value${option}`, value);
             VanillaSlider.updateSliderPosition(this.sliderData);
@@ -260,9 +260,9 @@ export class VanillaSlider {
         const position = (e.clientX - rect.left) / rect.width;
         const range = sliderData.config.max - sliderData.config.min;
         const newValue = sliderData.config.min + (position * range);
-        
+
         VanillaSlider.setSliderValue(sliderData, newValue);
-        
+
         if (isStart || sliderData.config.onSlide) {
             VanillaSlider.triggerSlide(sliderData);
         }
@@ -270,18 +270,18 @@ export class VanillaSlider {
 
     static setSliderValue(sliderData, value) {
         const { config } = sliderData;
-        
+
         // Clamp value to bounds
         value = Math.max(config.min, Math.min(config.max, value));
-        
+
         // Round to step
         if (config.step > 0) {
             value = Math.round((value - config.min) / config.step) * config.step + config.min;
         }
-        
+
         sliderData.value = value;
         VanillaSlider.updateSliderPosition(sliderData);
-        
+
         // Update ARIA attribute
         sliderData.thumb.setAttribute('aria-valuenow', value);
     }
@@ -289,7 +289,7 @@ export class VanillaSlider {
     static updateSliderPosition(sliderData) {
         const { config, fill, thumb } = sliderData;
         const percentage = (sliderData.value - config.min) / (config.max - config.min) * 100;
-        
+
         fill.style.width = `${percentage}%`;
         thumb.style.left = `${percentage}%`;
     }
@@ -324,7 +324,7 @@ export class VanillaSlider {
         if (container && container.vanillaSlider) {
             const sliderData = container.vanillaSlider;
             sliderData.config[option] = value;
-            
+
             if (option === 'min' || option === 'max') {
                 sliderData.thumb.setAttribute(`aria-value${option}`, value);
                 VanillaSlider.updateSliderPosition(sliderData);

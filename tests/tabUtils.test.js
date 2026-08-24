@@ -18,7 +18,7 @@ describe('Tab Utils', () => {
 
     test('should create tab HTML', () => {
         const html = createTabHTML('#test', 'data-value', 'Test Tab');
-        
+
         expect(typeof html).toBe('string');
         expect(html).toContain('Test Tab');
         expect(html).toContain('#test');
@@ -28,14 +28,14 @@ describe('Tab Utils', () => {
 
     test('should create active tab HTML', () => {
         const html = createTabHTML('#test', 'data-value', 'Test Tab', true);
-        
+
         expect(html).toContain('active');
         expect(html).toContain('Test Tab');
     });
 
     test('should create tab pane HTML', () => {
         const html = createTabPaneHTML('test-id', 'Test content');
-        
+
         expect(typeof html).toBe('string');
         expect(html).toContain('Test content');
         expect(html).toContain('test-id');
@@ -44,7 +44,7 @@ describe('Tab Utils', () => {
 
     test('should create active tab pane HTML', () => {
         const html = createTabPaneHTML('test-id', 'Test content', true);
-        
+
         expect(html).toContain('active');
         expect(html).toContain('show');
         expect(html).toContain('Test content');

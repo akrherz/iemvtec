@@ -10,7 +10,7 @@ import { requireElement, requireSelectElement } from 'iemjs/domUtils';
  * @returns {string} HTML options string
  */
 export function buildSelectOptions(data, template = '<option value="{value}">{text}</option>') {
-    return data.map(([value, text]) => 
+    return data.map(([value, text]) =>
         template.replaceAll('{value}', value).replaceAll('{text}', text)
     ).join('');
 }
@@ -33,7 +33,7 @@ export function populateSelect(selectId, data, defaultValue, template = '<option
 
 /**
  * Utility function to populate select element with options for dynamic data
- * @param {string} selectId - The select element ID  
+ * @param {string} selectId - The select element ID
  * @param {Array} data - Array of objects with id and name/text properties
  * @param {string} [defaultValue] - Default value to select
  * @param {string} [valueKey='id'] - Key for option value
@@ -48,7 +48,7 @@ export function populateSelectFromObjects(selectId, data, defaultValue, valueKey
         option.textContent = item[textKey];
         selectElement.appendChild(option);
     });
-    
+
     if (defaultValue) {
         /** @type {HTMLSelectElement} */ (selectElement).value = defaultValue;
     }

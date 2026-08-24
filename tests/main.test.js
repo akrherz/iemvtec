@@ -50,7 +50,7 @@ import { main } from '../src/main.js';
 describe('Main', () => {
     beforeEach(() => {
         jest.clearAllMocks();
-        
+
         // Mock DOM elements that main() checks for
         // @ts-ignore
         document.querySelectorAll = jest.fn((selector) => {

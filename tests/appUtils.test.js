@@ -6,8 +6,8 @@ import { jest, describe, test, expect, beforeEach } from '@jest/globals';
 
 // Mock dependencies
 jest.mock('ol/source', () => ({
-    Vector: jest.fn().mockImplementation((options) => ({ 
-        options, 
+    Vector: jest.fn().mockImplementation((options) => ({
+        options,
         getFeatures: () => [],
         addFeature: jest.fn(),
         clear: jest.fn()
@@ -21,7 +21,7 @@ jest.mock('ol/format', () => ({
 }));
 
 jest.mock('iemjs/domUtils', () => ({
-    requireElement: jest.fn(() => ({ 
+    requireElement: jest.fn(() => ({
         innerHTML: 'mock content'
     }))
 }));
@@ -80,7 +80,7 @@ describe('App Utils', () => {
         const mockElement = document.createElement('div');
         mockElement.id = 'test-element';
         mockElement.textContent = 'Test content';
-        
+
         // Mock the selection API for JSDOM
         const mockRange = {
             selectNodeContents: jest.fn(),
@@ -90,7 +90,7 @@ describe('App Utils', () => {
             removeAllRanges: jest.fn(),
             addRange: jest.fn()
         };
-        
+
         // @ts-ignore
         global.window.getSelection = jest.fn(() => mockSelection);
         // @ts-ignore
@@ -102,9 +102,9 @@ describe('App Utils', () => {
                 writeText: () => Promise.resolve()
             }
         });
-        
+
         document.body.appendChild(mockElement);
-        
+
         expect(() => {
             selectElementContents('test-element');
         }).not.toThrow();

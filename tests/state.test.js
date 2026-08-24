@@ -42,7 +42,7 @@ describe('State Management', () => {
     test('should handle state subscription', () => {
         const callback = jest.fn();
         subscribeToState(StateKeys.WFO, callback);
-        
+
         setState(StateKeys.WFO, 'KDSM');
         expect(callback).toHaveBeenCalled();
     });

@@ -6,12 +6,12 @@ import { jest, describe, test, expect, beforeEach } from '@jest/globals';
 
 // Mock dependencies
 jest.mock('iemjs/domUtils', () => ({
-    requireElement: jest.fn(() => ({ 
+    requireElement: jest.fn(() => ({
         style: {},
         querySelector: jest.fn(() => ({ innerHTML: '' })),
         innerHTML: ''
     })),
-    requireSelectElement: jest.fn(() => ({ 
+    requireSelectElement: jest.fn(() => ({
         value: '2024',
         selectedOptions: [{ text: 'Mock Option' }]
     })),

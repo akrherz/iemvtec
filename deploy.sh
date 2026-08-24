@@ -19,4 +19,3 @@ else
     echo "Deploying to local development environment..."
     rsync -av dist/* /opt/iem/htdocs/vtec/
 fi
-

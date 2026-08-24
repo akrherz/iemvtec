@@ -7,7 +7,7 @@ import { jest, describe, test, expect, beforeEach } from '@jest/globals';
 // Mock dependencies
 jest.mock('datatables.net-dt', () => jest.fn());
 jest.mock('iemjs/domUtils', () => ({
-    requireElement: jest.fn(() => ({ 
+    requireElement: jest.fn(() => ({
         id: 'mock-table'
     }))
 }));

@@ -72,7 +72,7 @@ describe('Geometry Loader', () => {
     test('should load VTEC geometry', () => {
         const mockLSRTable = { clear: jest.fn(), row: { add: jest.fn() }, draw: jest.fn() };
         const mockSBWLSRTable = { clear: jest.fn(), row: { add: jest.fn() }, draw: jest.fn() };
-        
+
         expect(() => {
             loadVTECGeometry(mockLSRTable, mockSBWLSRTable);
         }).not.toThrow();

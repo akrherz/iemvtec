@@ -39,28 +39,28 @@ describe('Table Utils - Real DOM with Real Functions', () => {
     test('initLSRTables actually works with real DOM', () => {
         // Call the real function
         expect(() => initLSRTables()).not.toThrow();
-        
+
         // Verify it created the table objects
         const lsrTable = getLSRTable();
         const sbwLsrTable = getSBWLSRTable();
-        
+
         expect(lsrTable).toBeTruthy();
         expect(sbwLsrTable).toBeTruthy();
     });
 
     test('click handler actually works on real table', () => {
         initLSRTables();
-        
+
         const table = document.getElementById('lsrtable');
         const detailsControl = table.querySelector('.details-control');
         const icon = table.querySelector('i.bi');
-        
+
         // Verify initial state
         expect(icon.classList.contains('bi-plus-square')).toBe(true);
-        
+
         // Simulate real click - this exercises the actual click handler in tableUtils.js
         detailsControl.dispatchEvent(new MouseEvent('click', { bubbles: true }));
-        
+
         // The real click handler should have been called
         expect(detailsControl).toBeTruthy();
     });

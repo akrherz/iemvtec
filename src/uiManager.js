@@ -110,7 +110,7 @@ export function cleanup() {
             slider.destroy();
         }
     });
-    
+
     Object.keys(uiElements).forEach(category => {
         uiElements[category] = {};
     });

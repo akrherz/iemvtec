@@ -26,7 +26,7 @@ function isDOMReady() {
         '#eventtable',            // Event table
         '#lsrtable'               // LSR table
     ];
-    
+
     for (const selector of essentialElements) {
         const elements = document.querySelectorAll(selector);
         if (elements.length === 0) {
@@ -34,7 +34,7 @@ function isDOMReady() {
             return false;
         }
     }
-    
+
     return true;
 }
 
@@ -60,7 +60,7 @@ function waitForDOMReady() {
  * Initialize the application after DOM is ready
  */
 async function initializeApp() {
-    
+
     // Step 1, activate UI components
     // Initialize form controls with default values
     initializeForm();
@@ -86,7 +86,7 @@ async function initializeApp() {
     });
 
     initMap();
-    
+
     // Enable Tom Select for WFO select if present
     const wfoEl = document.getElementById('wfo');
     if (wfoEl) {
