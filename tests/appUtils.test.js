@@ -2,52 +2,31 @@
  * Tests for app utilities module
  */
 
-import { jest, describe, test, expect, beforeEach } from '@jest/globals';
-
-// Mock dependencies
-jest.mock('ol/source', () => ({
-    Vector: jest.fn().mockImplementation((options) => ({
-        options,
-        getFeatures: () => [],
-        addFeature: jest.fn(),
-        clear: jest.fn()
-    }))
-}));
-
-jest.mock('ol/format', () => ({
-    GeoJSON: jest.fn(() => ({
-        readFeatures: jest.fn(() => [])
-    }))
-}));
-
-jest.mock('iemjs/domUtils', () => ({
-    requireElement: jest.fn(() => ({
-        innerHTML: 'mock content'
-    }))
-}));
-
-jest.mock('../src/vtecFields.js', () => ({
-    getWFO: jest.fn(() => 'KDMX'),
-    getPhenomena: jest.fn(() => 'TO'),
-    getSignificance: jest.fn(() => 'W'),
-    getETN: jest.fn(() => 45),
-    getYear: jest.fn(() => '2024')
-}));
-
-jest.mock('../src/state.js', () => ({
-    setState: jest.fn(),
-    StateKeys: {
-        ACTIVE_UPDATE: 'activeUpdate'
-    }
-}));
+import { jest, describe, test, expect, beforeEach, afterEach } from '@jest/globals';
 
 import { setUpdate, fetchWithParams, createGeoJSONVectorSource, selectElementContents, getData } from '../src/appUtils.js';
 
-const mockVtecFields = jest.requireMock('../src/vtecFields.js');
-
 describe('App Utils', () => {
+    const originalFetch = global.fetch;
+
     beforeEach(() => {
-        jest.clearAllMocks();
+        document.body.innerHTML = `
+            <select id="wfo"><option value="KDMX">KDMX</option></select>
+            <select id="phenomena"><option value="TO">TO</option></select>
+            <select id="significance"><option value="W">W</option></select>
+            <input id="etn" value="45" />
+            <select id="year"><option value="2024">2024</option></select>
+        `;
+        global.fetch = (url) => Promise.resolve({
+            json: () => Promise.resolve({ ok: true }),
+            ok: true,
+            url
+        });
+    });
+
+    afterEach(() => {
+        global.fetch = originalFetch;
+        document.body.innerHTML = '';
     });
 
     test('should load app utils module without errors', () => {
@@ -72,38 +51,14 @@ describe('App Utils', () => {
         expect(data.phenomena).toBe('TO');
         expect(data.significance).toBe('W');
         expect(data.etn).toBe(45);
-        expect(data.year).toBe('2024');
+        expect(data.year).toBe(2024);
     });
 
     test('should handle selectElementContents function', () => {
-        // Create a mock element with proper node structure
-        const mockElement = document.createElement('div');
-        mockElement.id = 'test-element';
-        mockElement.textContent = 'Test content';
-
-        // Mock the selection API for JSDOM
-        const mockRange = {
-            selectNodeContents: jest.fn(),
-            selectNode: jest.fn()
-        };
-        const mockSelection = {
-            removeAllRanges: jest.fn(),
-            addRange: jest.fn()
-        };
-
-        // @ts-ignore
-        global.window.getSelection = jest.fn(() => mockSelection);
-        // @ts-ignore
-        global.document.createRange = jest.fn(() => mockRange);
-        // @ts-ignore
-        Object.defineProperty(global.navigator, 'clipboard', {
-            configurable: true,
-            value: {
-                writeText: () => Promise.resolve()
-            }
-        });
-
-        document.body.appendChild(mockElement);
+        const target = document.createElement('div');
+        target.id = 'test-element';
+        target.textContent = 'Test content';
+        document.body.appendChild(target);
 
         expect(() => {
             selectElementContents('test-element');
@@ -111,18 +66,26 @@ describe('App Utils', () => {
     });
 
     test('should handle createGeoJSONVectorSource function', () => {
-        const mockGeoData = { type: 'FeatureCollection', features: [] };
-        // This function requires complex OpenLayers mocking
-        // For now, just test that the function exists
-        expect(typeof createGeoJSONVectorSource).toBe('function');
+        const source = createGeoJSONVectorSource({
+            type: 'FeatureCollection',
+            features: [{
+                type: 'Feature',
+                geometry: { type: 'Point', coordinates: [0, 0] },
+                properties: {}
+            }]
+        });
+        expect(source).toBeTruthy();
+        expect(source.getFeatures()).toHaveLength(1);
     });
 
     test('should omit nullish and NaN query values in fetchWithParams', async () => {
-        global.fetch = jest.fn(() =>
-            Promise.resolve({
+        let requestedUrl = '';
+        global.fetch = (url) => {
+            requestedUrl = url;
+            return Promise.resolve({
                 json: () => Promise.resolve({ ok: true })
-            })
-        );
+            });
+        };
 
         await fetchWithParams('https://example.com/service', {
             wfo: 'KDMX',
@@ -132,14 +95,14 @@ describe('App Utils', () => {
             phenomena: 'TO'
         });
 
-        expect(global.fetch).toHaveBeenCalledWith(
-            'https://example.com/service?wfo=KDMX&phenomena=TO'
-        );
+        expect(requestedUrl).toBe('https://example.com/service?wfo=KDMX&phenomena=TO');
     });
 
     test('should still expose raw NaN values in getData for current field state', () => {
-        mockVtecFields.getETN.mockReturnValueOnce(Number.NaN);
-        mockVtecFields.getYear.mockReturnValueOnce(Number.NaN);
+        const etn = document.getElementById('etn');
+        etn.value = 'NaN';
+        const year = document.getElementById('year');
+        year.value = 'NaN';
 
         const data = getData();
         expect(Number.isNaN(data.etn)).toBe(true);
