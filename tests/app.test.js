@@ -2,64 +2,77 @@
  * Tests for app entry point module (development)
  */
 
-import { jest, describe, test, expect, beforeEach } from '@jest/globals';
-
-// Mock main module
-jest.mock('../src/main.js', () => ({
-    main: jest.fn()
-}));
-
-jest.mock('../src/appUtils.js', () => ({
-    setUpdate: jest.fn(),
-    selectElementContents: jest.fn()
-}));
+import { jest, describe, test, expect, beforeEach, afterEach } from '@jest/globals';
 
 describe('App (Development Entry Point)', () => {
     let originalConsoleLog;
+    let originalFetch;
 
-    beforeEach(() => {
-        jest.clearAllMocks();
+    beforeEach(async () => {
+        jest.resetModules();
         originalConsoleLog = console.log;
+        originalFetch = global.fetch;
         console.log = () => {};
-
-        // Mock fetch for content loading
-        // @ts-ignore
-        global.fetch = jest.fn(() =>
-            Promise.resolve({
-                ok: true,
-                text: () => Promise.resolve('<div>Mock content</div>')
-            })
-        );
-
-        // Mock DOM elements
-        // @ts-ignore
-        document.getElementById = jest.fn((id) => {
-            if (id === 'vtec-content') {
-                return { innerHTML: '' };
-            }
-            return null;
+        global.fetch = async () => ({
+            ok: true,
+            text: async () => '<div>Real content</div>',
+            json: async () => ({ scans: [], products: [], radars: [] })
         });
 
-        // Import app to trigger global assignments
-        require('../src/app.js');
+        document.body.innerHTML = `
+            <div id="vtec-content"></div>
+            <a data-bs-toggle="tab"></a>
+            <table id="ugctable"></table>
+            <table id="eventtable"></table>
+            <table id="lsrtable"></table>
+            <table id="sbwlsrtable"></table>
+            <div id="radaropacity"></div>
+            <div id="timeslider"></div>
+            <div id="radartime"></div>
+            <button id="etn-prev"></button>
+            <button id="etn-next"></button>
+            <button id="myform-submit"></button>
+            <button id="lsr_kml_button"></button>
+            <button id="warn_kml_button"></button>
+            <button id="ci_kml_button"></button>
+            <button id="gr_button"></button>
+            <button id="toolbar-print"></button>
+            <div id="popup">
+                <button id="popup-closer"></button>
+                <div id="popup-content"></div>
+            </div>
+            <select id="radarsource"><option value=""></option></select>
+            <select id="radarproduct"><option value=""></option></select>
+            <div id="vtec_label"></div>
+            <div id="info_event_found"></div>
+            <div id="info_event_not_found"></div>
+            <div id="textdata"><ul></ul><div class="tab-content"></div></div>
+            <div id="radarmap"></div>
+            <div id="sbwhistory"></div>
+            <select id="wfo"><option value="KDMX">KDMX</option></select>
+            <select id="phenomena"><option value="TO">TO</option></select>
+            <select id="significance"><option value="W">W</option></select>
+            <input id="etn" value="45" />
+            <select id="year"><option value="2024">2024</option></select>
+        `;
+
+        await import('../src/app.js');
     });
 
     afterEach(() => {
         console.log = originalConsoleLog;
-        jest.restoreAllMocks();
+        global.fetch = originalFetch;
+        document.body.innerHTML = '';
+        delete window.setUpdate;
+        delete window.selectElementContents;
     });
 
     test('should be a development entry point', () => {
-        // This test verifies the module loads without errors
-        // The actual VTECApp class is instantiated immediately on import
         expect(true).toBe(true);
     });
 
     test('should expose global functions', () => {
-        // The global assignment happens on module load
-        // @ts-ignore
         expect(typeof window.setUpdate).toBe('function');
-        // @ts-ignore
         expect(typeof window.selectElementContents).toBe('function');
     });
 });

@@ -118,8 +118,8 @@ export function setupButtonHandlers() {
     );
 
     // Print button
-    requireElement('toolbar-print').addEventListener('click', function () {
-        this.blur();
+    requireElement('toolbar-print').addEventListener('click', (event) => {
+        event.currentTarget.blur();
 
         // Find the active tab in the text data section
         const activeTab = document.querySelector('#textdata .nav-tabs .nav-link.active');
