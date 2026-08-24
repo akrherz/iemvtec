@@ -77,9 +77,9 @@ function createSelectHandler(stateKey, valueExtractor, additionalAction) {
  */
 export function setupTabHandlers() {
     const tabElements = document.querySelectorAll('a[data-bs-toggle="tab"]');
-    
+
     tabElements.forEach(tabElement => {
-        
+
         // Fallback: Listen for click events in case Bootstrap events don't fire
         tabElement.addEventListener('click', (e) => {
             const target = e.currentTarget;
@@ -102,34 +102,34 @@ export function setupButtonHandlers() {
     requireElement('etn-prev').addEventListener('click', createButtonHandler(() => setETN(getETN() - 1)));
     requireElement('etn-next').addEventListener('click', createButtonHandler(() => setETN(getETN() + 1)));
     requireElement('myform-submit').addEventListener('click', createButtonHandler(() => {}));
-    
+
     // KML and export buttons
-    requireElement('lsr_kml_button').addEventListener('click', 
+    requireElement('lsr_kml_button').addEventListener('click',
         createRedirectHandler(() => `/kml/sbw_lsrs.php${urlencode()}`)
     );
-    requireElement('warn_kml_button').addEventListener('click', 
+    requireElement('warn_kml_button').addEventListener('click',
         createRedirectHandler(() => `/kml/vtec.php${urlencode()}`)
     );
-    requireElement('ci_kml_button').addEventListener('click', 
+    requireElement('ci_kml_button').addEventListener('click',
         createRedirectHandler(() => `/kml/sbw_county_intersect.php${urlencode()}`)
     );
-    requireElement('gr_button').addEventListener('click', 
+    requireElement('gr_button').addEventListener('click',
         createRedirectHandler(() => `/request/grx/vtec.php${urlencode()}`)
     );
 
     // Print button
     requireElement('toolbar-print').addEventListener('click', function () {
         this.blur();
-        
+
         // Find the active tab in the text data section
         const activeTab = document.querySelector('#textdata .nav-tabs .nav-link.active');
-        
+
         if (activeTab && activeTab.tagName === 'A') {
             const tabid = activeTab.getAttribute('href') || activeTab.getAttribute('data-bs-target');
-            
+
             if (tabid) {
                 const divToPrint = document.querySelector(tabid);
-                
+
                 if (divToPrint) {
                     const content = divToPrint.innerHTML;
                     if (content && content.trim() !== '' && content !== 'Text Product Issuance') {
@@ -144,14 +144,14 @@ export function setupButtonHandlers() {
                                         <head>
                                             <title>Print - VTEC Text Data</title>
                                             <style>
-                                                body { 
-                                                    font-family: monospace; 
-                                                    margin: 20px; 
+                                                body {
+                                                    font-family: monospace;
+                                                    margin: 20px;
                                                     line-height: 1.4;
                                                 }
-                                                pre { 
-                                                    white-space: pre-wrap; 
-                                                    word-wrap: break-word; 
+                                                pre {
+                                                    white-space: pre-wrap;
+                                                    word-wrap: break-word;
                                                     font-size: 12px;
                                                 }
                                                 @media print {
@@ -202,10 +202,10 @@ export function setupButtonHandlers() {
  * Setup select element event handlers
  */
 export function setupSelectHandlers() {
-    requireSelectElement('radarsource').addEventListener('change', 
+    requireSelectElement('radarsource').addEventListener('change',
         createSelectHandler(StateKeys.RADAR, () => requireSelectElement('radarsource').value, updateRADARProducts)
     );
-    requireSelectElement('radarproduct').addEventListener('change', 
+    requireSelectElement('radarproduct').addEventListener('change',
         createSelectHandler(StateKeys.RADAR_PRODUCT, () => requireSelectElement('radarproduct').value, (value) => {
             setRadarProductLegendImage(value);
             updateRADARTimeSlider();
@@ -227,12 +227,12 @@ export function setupEventTableHandler(eventTable) {
             if (!(target instanceof HTMLElement)) {
                 return;
             }
-            
+
             const tr = target.closest('tr');
             if (!tr || !eventTable) {
                 return;
             }
-            
+
             const data = eventTable.row(tr).data();
             if (parseInt(data.id, 10) === getETN()) {
                 return;

@@ -79,7 +79,7 @@ function makeLSRTable(div) {
         ],
         order: [[1, 'asc']],
     });
-    
+
     // Add event listener for opening and closing details
     tableElement.addEventListener('click', (e) => {
         const target = e.target;

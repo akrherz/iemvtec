@@ -17,27 +17,27 @@ import { getUGCTable } from './ugcTable.js';
  */
 export function loadTabs() {
     setLoadedVTEC(vtecString());
-    
+
     // Setup image displays
     setupImageDisplays();
-    
+
     // Setup VTEC label
     const wfoSelect = requireSelectElement('wfo');
     const phenomenaSelect = requireSelectElement('phenomena');
     const significanceSelect = requireSelectElement('significance');
-    
+
     requireElement('vtec_label').innerHTML =
         `${getYear()} ${escapeHTML(wfoSelect.selectedOptions[0].text)}
             ${escapeHTML(phenomenaSelect.selectedOptions[0].text)}
             ${escapeHTML(significanceSelect.selectedOptions[0].text)}
             Number ${getETN()}`;
-    
+
     // Load VTEC event data and populate tabs
     loadVTECEventData(getUGCTable(), getLSRTable(), getSBWLSRTable());
-    
+
     // Load VTEC events table data
     loadVTECEventsData(getEventTable());
-    
+
     // Set the active tab to 'Event Info' if we are on the first tab
     const firstTab = document.querySelector('#thetabs_tabs a');
     if (firstTab && firstTab.getAttribute('href') === '#help') {
@@ -51,7 +51,7 @@ export function loadTabs() {
 /**
  * Load VTEC event data and populate the dynamic tabs interface
  * @param {any} ugcTable - DataTable instance for UGC data
- * @param {any} lsrTable - DataTable instance for LSR data  
+ * @param {any} lsrTable - DataTable instance for LSR data
  * @param {any} sbwLsrTable - DataTable instance for SBW LSR data
  */
 export function loadVTECEventData(ugcTable, lsrTable, sbwLsrTable) {
@@ -70,21 +70,21 @@ export function loadVTECEventData(ugcTable, lsrTable, sbwLsrTable) {
                 tabs.innerHTML = '';
                 tabcontent.innerHTML = '';
                 tabs.innerHTML = '<li class="nav-item"><a class="nav-link" href="#tall" data-bs-toggle="tab" data-bs-target="#tall">All</a></li>';
-                
+
                 const stamp = moment.utc(data.report.valid).local().format('DD/h:mm A');
                 const update = moment.utc(data.report.valid).format('YYYYMMDDHHmm');
                 const plink = `<a href="/p.php?pid=${data.report.product_id}" target="_new">Permalink to ${data.report.product_id}</a><br />`;
-                
+
                 tabs.innerHTML += createTabHTML('#t0', update, `Issue ${stamp}`, true);
                 tabcontent.innerHTML = createTabPaneHTML('tall', `<pre>${data.report.text}</pre>`) +
                                       createTabPaneHTML('t0', `${plink}<pre>${data.report.text}</pre>`, true);
-                
+
                 let tidx = 1;
                 data.svs.forEach(svs => {
                     const splink = `<a href="/p.php?pid=${svs.product_id}" target="_new">Permalink to ${svs.product_id}</a><br />`;
                     const sstamp = moment.utc(svs.valid).local().format('DD/h:mm A');
                     const supdate = moment.utc(svs.valid).format('YYYYMMDDHHmm');
-                    
+
                     tabs.innerHTML += createTabHTML(`#t${tidx}`, supdate, `U${tidx}: ${sstamp}`);
                     tabcontent.innerHTML += createTabPaneHTML(`t${tidx}`, `${splink}<pre>${svs.text}</pre>`);
                     requireElement('tall').innerHTML += `<pre>${svs.text}</pre>`;
@@ -155,9 +155,9 @@ export function setupImageDisplays() {
     const vstring = `${getYear()}.${getWFO()}.${getPhenomena()}.${getSignificance()}.${String(
         getETN()
     ).padStart(4, '0')}`;
-    
-    requireElement('radarmap').innerHTML = 
+
+    requireElement('radarmap').innerHTML =
         `<img src="https://mesonet.agron.iastate.edu/GIS/radmap.php?layers[]=nexrad&layers[]=sbw&layers[]=sbwh&layers[]=uscounties&vtec=${vstring}" class="img-fluid">`;
-    requireElement('sbwhistory').innerHTML = 
+    requireElement('sbwhistory').innerHTML =
         `<img src="https://mesonet.agron.iastate.edu/GIS/sbw-history.php?vtec=${vstring}" class="img-fluid">`;
 }

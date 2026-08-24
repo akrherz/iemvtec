@@ -12,7 +12,7 @@ jest.mock('iemjs/domUtils', () => ({
     escapeHTML: jest.fn(str => str)
 }));
 
-import { 
+import {
     getYear, setYear,
     getWFO, setWFO,
     getPhenomena, setPhenomena,
@@ -42,7 +42,7 @@ describe('VTEC Fields', () => {
         expect(() => {
             setYear('2024');
         }).not.toThrow();
-        
+
         const year = getYear();
         expect(typeof year).toBe('number');
         expect(year).toBe(2024);
@@ -52,7 +52,7 @@ describe('VTEC Fields', () => {
         expect(() => {
             setWFO('KDMX');
         }).not.toThrow();
-        
+
         const wfo = getWFO();
         expect(typeof wfo).toBe('string');
     });
@@ -61,7 +61,7 @@ describe('VTEC Fields', () => {
         expect(() => {
             setPhenomena('TO');
         }).not.toThrow();
-        
+
         const phenomena = getPhenomena();
         expect(typeof phenomena).toBe('string');
     });
@@ -70,7 +70,7 @@ describe('VTEC Fields', () => {
         expect(() => {
             setSignificance('W');
         }).not.toThrow();
-        
+
         const significance = getSignificance();
         expect(typeof significance).toBe('string');
     });
@@ -79,7 +79,7 @@ describe('VTEC Fields', () => {
         expect(() => {
             setETN(123);
         }).not.toThrow();
-        
+
         const etn = getETN();
         expect(typeof etn).toBe('number');
     });

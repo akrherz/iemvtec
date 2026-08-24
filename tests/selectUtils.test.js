@@ -7,7 +7,7 @@ import { jest, describe, test, expect, beforeEach } from '@jest/globals';
 // Mock iemjs dependencies
 jest.mock('iemjs/domUtils', () => ({
     requireElement: jest.fn(() => ({ innerHTML: '' })),
-    requireSelectElement: jest.fn(() => ({ 
+    requireSelectElement: jest.fn(() => ({
         innerHTML: '',
         value: 'test-value',
         querySelector: jest.fn()
@@ -29,7 +29,7 @@ describe('Select Utils', () => {
     test('should build select options from array data', () => {
         const data = [['key1', 'Value 1'], ['key2', 'Value 2']];
         const options = buildSelectOptions(data);
-        
+
         expect(typeof options).toBe('string');
         expect(options).toContain('Value 1');
         expect(options).toContain('Value 2');
@@ -41,7 +41,7 @@ describe('Select Utils', () => {
         const data = [['key1', 'Value 1']];
         const template = '<option value="{value}" class="custom">{text}</option>';
         const options = buildSelectOptions(data, template);
-        
+
         expect(options).toContain('class="custom"');
         expect(options).toContain('Value 1');
     });
@@ -54,7 +54,7 @@ describe('Select Utils', () => {
 
     test('should populate select element', () => {
         const data = [['key1', 'Value 1']];
-        
+
         expect(() => {
             populateSelect('test-select', data, 'key1');
         }).not.toThrow();

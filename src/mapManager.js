@@ -172,7 +172,7 @@ export function getRadarTimes() {
 
 /**
  * Get the RADAR source for a specific time index
- * @param {number} timeIndex 
+ * @param {number} timeIndex
  * @returns {XYZ}
  */
 export function getRADARSource(timeIndex = 0) {
@@ -196,7 +196,7 @@ export function getRADARSource(timeIndex = 0) {
 
 /**
  * Updates the RADAR TMS source and UI elements relevant.
- * @param {number} timeIndex 
+ * @param {number} timeIndex
  */
 export function updateRadarDisplay(timeIndex)  {
     const layer = getRadarTMSLayer();
@@ -227,7 +227,7 @@ export function buildMap() {
         console.error('Popup element with id "popup" not found in DOM');
         return;
     }
-    
+
     // Set up close button handler
     const closer = document.getElementById('popup-closer');
     if (closer) {
@@ -351,7 +351,7 @@ export function updateRADARTimeSlider() {
         end: getState(StateKeys.EXPIRE).utc().format(),
         operation: 'list',
     };
-    
+
     fetch('https://mesonet.agron.iastate.edu/json/radar.py?' + new URLSearchParams(requestData))
         .then(response => response.json())
         .then(data => {
@@ -447,7 +447,7 @@ export function updateRADARSources() {
         'EPSG:3857',
         'EPSG:4326'
     );
-    
+
     const requestData = {
         lat: center[1].toString(),
         lon: center[0].toString(),
@@ -455,7 +455,7 @@ export function updateRADARSources() {
         start: getState(StateKeys.ISSUE).utc().format(),
         operation: 'available',
     };
-    
+
     fetch('https://mesonet.agron.iastate.edu/json/radar.py?' + new URLSearchParams(requestData))
         .then(response => response.json())
         .then(data => {
@@ -542,10 +542,10 @@ export function initMap() {
             if (!feature.get('type')) {
                 return;
             }
-            
+
             const coordinates = feature.getGeometry().getCoordinates();
             popup.setPosition(coordinates);
-            
+
             // Set the popup content in the popup-content div
             const popupContent = document.getElementById('popup-content');
             if (popupContent) {

@@ -1,8 +1,17 @@
 ci:
   autoupdate_schedule: quarterly
 repos:
+  - repo: https://github.com/shellcheck-py/shellcheck-py
+    rev: v0.11.0.1-1
+    hooks:
+      - id: shellcheck
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
   - repo: https://github.com/pre-commit/mirrors-eslint
-    rev: 'v10.6.0'
+    rev: 'v10.9.0'
     hooks:
       - id: eslint
         additional_dependencies:
@@ -13,4 +22,3 @@ repos:
         types: [file]
         args:
         - --fix
-

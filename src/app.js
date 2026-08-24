@@ -70,4 +70,4 @@ class VTECApp {
     }
 }
 
-window._app = new VTECApp(); 
+window._app = new VTECApp();

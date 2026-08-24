@@ -1,13 +1,13 @@
 /**
  * VTEC geometry loading utilities for fetching and displaying various geometric data
  */
-import { 
-    getProductVectorCountyLayer, 
-    getProductVectorPolygonLayer, 
-    getSBWIntersectionLayer, 
+import {
+    getProductVectorCountyLayer,
+    getProductVectorPolygonLayer,
+    getSBWIntersectionLayer,
     getLSRLayer,
     getMap,
-    updateRADARSources 
+    updateRADARSources
 } from './mapManager.js';
 import { fetchWithParams, createGeoJSONVectorSource, getData } from './appUtils.js';
 
@@ -18,7 +18,7 @@ import { fetchWithParams, createGeoJSONVectorSource, getData } from './appUtils.
  */
 export function loadVTECGeometry(lsrTable, sbwLsrTable) {
     const basePayload = getData();
-    
+
     // County geometry
     const countyPayload = { ...basePayload, sbw: 0, lsrs: 0 };
     fetchWithParams('https://mesonet.agron.iastate.edu/geojson/vtec_event.py', countyPayload)
@@ -33,7 +33,7 @@ export function loadVTECGeometry(lsrTable, sbwLsrTable) {
         .catch(error => {
             console.error('Error fetching VTEC geometry:', error);
         });
-    
+
     const payload2 = getData();
     payload2.sbw = 1;
     payload2.lsrs = 0;
@@ -44,7 +44,7 @@ export function loadVTECGeometry(lsrTable, sbwLsrTable) {
         .catch(error => {
             console.error('Error fetching SBW polygon data:', error);
         });
-    
+
     // Intersection data
     fetchWithParams('https://mesonet.agron.iastate.edu/geojson/sbw_county_intersect.geojson', basePayload)
         .then(geodata => {
@@ -75,7 +75,7 @@ export function loadVTECGeometry(lsrTable, sbwLsrTable) {
         .catch(error => {
             console.error('Error fetching LSR data:', error);
         });
-    
+
     // SBW LSRs
     const sbwLsrPayload = { ...basePayload, sbw: 1, lsrs: 1 };
     fetchWithParams('https://mesonet.agron.iastate.edu/geojson/vtec_event.py', sbwLsrPayload)

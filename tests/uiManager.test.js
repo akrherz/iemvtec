@@ -6,7 +6,7 @@ import { jest, describe, test, expect, beforeEach } from '@jest/globals';
 
 // Mock dependencies
 jest.mock('iemjs/domUtils', () => ({
-    requireElement: jest.fn(() => ({ 
+    requireElement: jest.fn(() => ({
         id: 'mock-element',
         addEventListener: jest.fn(),
         style: {}
@@ -50,7 +50,7 @@ describe('UI Manager', () => {
         // Test getting time slider value
         const value = getTimeSliderValue();
         expect(typeof value).toBe('number');
-        
+
         // Test updating time slider
         expect(() => {
             updateTimeSlider(100, 50);

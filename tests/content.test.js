@@ -17,7 +17,7 @@ jest.mock('../src/appUtils.js', () => ({
 describe('Content (Production Entry Point)', () => {
     beforeEach(() => {
         jest.clearAllMocks();
-        
+
         // Import content to trigger global assignments
         require('../src/content.js');
     });

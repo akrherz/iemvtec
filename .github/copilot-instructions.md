@@ -1,11 +1,11 @@
 # IEM VTEC App Repo
 
-Every time you choose to apply a rule(s), explicitly state the rule(s) in the output. 
+Every time you choose to apply a rule(s), explicitly state the rule(s) in the output.
 You can abbreviate the rule description to a single word or phrase.
 
 ## Rules
 
-- **NO MOCKS EVER** 
+- **NO MOCKS EVER**
   - Do not use mocks in any tests. All tests should use real data and real
     components. If you decide a mock is needed, please have me approve it
     first and provide a valid reason why a mock is necessary.

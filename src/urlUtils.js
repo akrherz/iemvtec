@@ -2,7 +2,7 @@
  * URL and navigation utility functions for managing application routing
  */
 import { setState, getState, StateKeys } from './state.js';
-import { setYear, setWFO, setPhenomena, setSignificance, setETN, 
+import { setYear, setWFO, setPhenomena, setSignificance, setETN,
          getYear, getWFO, getPhenomena, getSignificance, getETN } from './vtecFields.js';
 import { escapeHTML } from 'iemjs/domUtils';
 import { loadTabs } from './dataLoader.js';
@@ -102,12 +102,12 @@ export function updateURL(propogate = true) {
     if (isValidNumber(eventid)) {
         params.set('eventid', String(eventid));
     }
-    
+
     const activeTab = getState(StateKeys.ACTIVE_TAB);
     if (activeTab) {
         params.set('tab', activeTab);
     }
-    
+
     const radar_product_time = getState(StateKeys.RADAR_PRODUCT_TIME);
     const radarProduct = getState(StateKeys.RADAR_PRODUCT);
     const radar = getState(StateKeys.RADAR);
@@ -116,12 +116,12 @@ export function updateURL(propogate = true) {
         params.set('radar_product', radarProduct);
         params.set('radar_time', /** @type {any} */ (radar_product_time).utc().format('YYYYMMDDHHmm'));
     }
-    
+
     const activeUpdate = getState(StateKeys.ACTIVE_UPDATE);
     if (activeUpdate) {
         params.set('update', activeUpdate);
     }
-    
+
     const url = `?${params.toString()}`;
     document.title = `VTEC Event ${vtecString()}`;
     history.pushState(null, '', url);
@@ -177,7 +177,7 @@ function handleQueryParams(params) {
     const phenomena = params.get('phenomena');
     const significance = params.get('significance');
     const eventid = params.get('eventid');
-    
+
     if (year && wfo && phenomena && significance && eventid) {
         setYear(year);
         // Fix bad WFOs
@@ -190,7 +190,7 @@ function handleQueryParams(params) {
         setSignificance(significance);
         setETN(eventid);
     }
-    
+
     const radar = params.get('radar');
     const radarProduct = params.get('radar_product');
     const radarTime = params.get('radar_time');
@@ -202,17 +202,17 @@ function handleQueryParams(params) {
             moment.utc(escapeHTML(radarTime), 'YYYYMMDDHHmm')
         );
     }
-    
+
     const tab = params.get('tab');
     if (tab) {
         setActiveTab(tab);
     }
-    
+
     const update = params.get('update');
     if (update) {
         setUpdateTab(update);
     }
-    
+
     if (loadedVTEC !== vtecString()) {
         loadTabs();
     }
@@ -230,13 +230,13 @@ export function handleURLChange(url) {
         handleQueryParams(urlObj.searchParams);
         return;
     }
-    
+
     // Handle legacy RESTish URLs
     const pathSegments = url.split('/').filter((segment) => segment);
     if (pathSegments.length < 3) {
         return;
     }
-    
+
     // We only need to reload if the event has changed
     for (let i = 1; i + 1 < pathSegments.length; i += 2) {
         if (pathSegments[i] === 'event') {
@@ -269,7 +269,7 @@ export function handleURLChange(url) {
             setUpdateTab(pathSegments[i + 1]);
         }
     }
-    
+
     if (loadedVTEC !== vtecString()) {
         loadTabs();
     }
@@ -298,7 +298,7 @@ export function consumeInitialURL() {
         return;
     }
     const subtokens = tokens[1].split('/');
-    
+
     // Parse the hash into query parameters and migrate
     const params = new URLSearchParams();
     const vtecTokens = subtokens[0].split('-');
@@ -309,7 +309,7 @@ export function consumeInitialURL() {
         params.set('significance', vtecTokens[5]);
         params.set('eventid', vtecTokens[6]);
     }
-    
+
     if (subtokens.length > 1) {
         // Handle radar info from hash
         const radarTokens = subtokens[1].split('-');
@@ -319,9 +319,9 @@ export function consumeInitialURL() {
             params.set('radar_time', radarTokens[2]);
         }
     }
-    
+
     params.set('tab', 'info');
-    
+
     const migratedUrl = `?${params.toString()}`;
     handleURLChange(migratedUrl);
 }
